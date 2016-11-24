@@ -9,13 +9,10 @@ from LinkedList import LinkedList
 
 if __name__ == "__main__":
     alireza = LinkedList()
-    alireza.add('mom')
-    alireza.add('dad')
-    alireza.remove('mom')
-    alireza.add('you')
     alireza.add('wow')
-    alireza.remove('you')
-    print(alireza)
+    alireza.add('alireza')
+    alireza.remove('wow')
+    print(alireza.head.prev.data)
     # start_time = time.time()
     dir = input('Please Enter the direction of File: ')
 
