@@ -8,12 +8,16 @@ class Stack():
         self.stackArray.append(item)
 
     def pop(self):
-        popElement = self.stackArray[len(self.stackArray)-1]
-        del self.stackArray[len(self.stackArray)-1]
-        return popElement
+        if not self.isEmpty():
+            popElement = self.stackArray[len(self.stackArray)-1]
+            del self.stackArray[len(self.stackArray)-1]
+            return popElement
+        return None
 
     def peek(self):
-        return self.stackArray[len(self.stackArray)-1]
+        if not self.isEmpty():
+            return self.stackArray[len(self.stackArray) - 1]
+        return None
 
     def isEmpty(self):
         return self.stackArray == []
