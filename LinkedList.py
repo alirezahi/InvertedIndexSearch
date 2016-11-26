@@ -1,28 +1,30 @@
 # <--Creating Class LinkedList-->
 class Node():
-    def __init__( self, data=None,next=None,prev=None):
+    def __init__( self, data=None,next=None,prev=None,documentName = None):
         self.data = data
         self.next = next
         self.prev = prev
         self.superNext = None
         self.superPrev = None
+        self.documentName = documentName
 
 class LinkedList():
 
-    def __init__( self ) :
-        self.head = Node()
+    def __init__( self ,documentName = None) :
+        self.head = Node(documentName)
         self.head.prev = None
         self.head.next = None
+        self.documentName = documentName
 
     def add( self, data ) :
-        node = Node(data)
+        node = Node(data , documentName=self.documentName)
         if self.head.next == None:
             self.head.next = node
             self.head.prev = node
             node.prev = self.head
         else:
-            self.head.prev.next = node
             node.prev = self.head.prev
+            self.head.prev.next = node
             self.head.prev = node
             self.head.prev.next = self.head
         return node
@@ -33,7 +35,7 @@ class LinkedList():
             self.head.superPrev = node
         else:
             self.head.superPrev.superNext = node
-            node.prev = self.head.superPrev
+            node.superPrev = self.head.superPrev
             self.head.superPrev = node
             self.head.superPrev.superNext = self.head
         return node
@@ -60,12 +62,15 @@ class LinkedList():
             inputNode.superPrev == None
 
     def getAll(self):
+        i=0
         p = self.head
-        if p.superNext != None:
-            while p.superNext != None:
-                p = p.superNext
-                print(p.data + z.__str__())
-
+        nameOfLastDocument = ''
+        while p.superNext != self.head:
+            p = p.superNext
+            if nameOfLastDocument != p.documentName:
+                nameOfLastDocument = p.documentName
+                print(p.documentName)
+            print( '| -> ( ... ' + p.prev.data +' '+ p.data +' '+ p.next.data +' ' + ' ... )')
     def __str__(self):
         s = ""
         p = self.head

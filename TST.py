@@ -48,6 +48,7 @@ class TST():
         return node
 
     def getWord(self, node , word, charIndex):
+
         if node == None:
             return None
 
