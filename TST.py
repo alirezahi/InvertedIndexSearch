@@ -5,10 +5,11 @@ class NodeTST():
         self.leftChild = None
         self.rightChild = None
         self.middleChild = None
+        self.completeWord = False
 
 class TST():
     def __init__(self):
-        self.root = None
+        self.root = NodeTST('m')
 
     def push(self,word,value):
         self.root = self.pushWord(self.root,word,value,0)
@@ -30,6 +31,7 @@ class TST():
 
         else:
             node.value = value
+            node.completeWord = True
 
         return node
 
@@ -59,3 +61,12 @@ class TST():
         else :
             return node
 
+    def traverse(self,node,charWord=''):
+        if(node.leftChild != None):
+            self.traverse(node.leftChild,charWord)
+        if (node.rightChild != None):
+            self.traverse(node.rightChild,charWord)
+        if (node.middleChild != None):
+            self.traverse(node.middleChild,charWord+node.character)
+        if(node.completeWord):
+            print (charWord+node.character)
