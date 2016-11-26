@@ -1,3 +1,5 @@
+from LinkedList import Node,LinkedList
+
 class NodeTST():
     def __init__(self,character = None):
         self.character = character
@@ -6,31 +8,33 @@ class NodeTST():
         self.rightChild = None
         self.middleChild = None
         self.completeWord = False
+        self.refrence = LinkedList()
 
 class TST():
     def __init__(self):
         self.root = NodeTST('m')
 
-    def push(self,word,value):
-        self.root = self.pushWord(self.root,word,value,0)
+    def push(self,nodeOfWord,value):
+        self.root = self.pushWord(self.root,nodeOfWord,value,0)
 
-    def pushWord(self, node, word, value, charIndex):
-        charOfWord = word[charIndex]
+    def pushWord(self, node, nodeOfWord, value, charIndex):
+        charOfWord = nodeOfWord.data[charIndex]
 
         if node == None:
             node = NodeTST(charOfWord)
 
         if charOfWord < node.character:
-            node.leftChild = self.pushWord(node.leftChild,word,value,charIndex)
+            node.leftChild = self.pushWord(node.leftChild,nodeOfWord,value,charIndex)
 
         elif charOfWord > node.character:
-            node.rightChild = self.pushWord(node.rightChild, word, value, charIndex)
+            node.rightChild = self.pushWord(node.rightChild, nodeOfWord, value, charIndex)
 
-        elif charIndex < len(word)-1:
-            node.middleChild = self.pushWord(node.middleChild, word, value, charIndex+1)
+        elif charIndex < len(nodeOfWord.data)-1:
+            node.middleChild = self.pushWord(node.middleChild, nodeOfWord, value, charIndex+1)
 
         else:
             node.value = value
+            node.refrence.SuperAdd(nodeOfWord)
             node.completeWord = True
 
         return node
@@ -41,7 +45,7 @@ class TST():
         if node == None:
             return None
 
-        return node.value
+        return node
 
     def getWord(self, node , word, charIndex):
         if node == None:
@@ -59,9 +63,13 @@ class TST():
             return self.getWord(node.middleChild,word,charIndex+1)
 
         else :
-            return node
+            if node.refrence == None:
+                return None
+            return node.refrence.getAll()
 
-    def traverse(self,node,charWord=''):
+    def traverse(self,node=None,charWord=''):
+        if node == None:
+            node = self.root
         if(node.leftChild != None):
             self.traverse(node.leftChild,charWord)
         if (node.rightChild != None):

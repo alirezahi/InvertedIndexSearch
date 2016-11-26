@@ -4,6 +4,8 @@ class Node():
         self.data = data
         self.next = next
         self.prev = prev
+        self.superNext = None
+        self.superPrev = None
 
 class LinkedList():
 
@@ -22,6 +24,19 @@ class LinkedList():
             self.head.prev.next = node
             node.prev = self.head.prev
             self.head.prev = node
+            self.head.prev.next = self.head
+        return node
+    def SuperAdd(self,node):
+        if self.head.superNext == None:
+            self.head.superNext = node
+            node.superPrev = self.head
+            self.head.superPrev = node
+        else:
+            self.head.superPrev.superNext = node
+            node.prev = self.head.superPrev
+            self.head.superPrev = node
+            self.head.superPrev.superNext = self.head
+        return node
 
     def search(self, k):
         p = self.head
@@ -36,6 +51,20 @@ class LinkedList():
         if p != None:
             p.prev.next = p.next
             p.next.prev = p.prev
+
+    def SuperRemove(self , inputNode):
+        if inputNode != None:
+            inputNode.superPrev.superNext = inputNode.superNext
+            inputNode.superNext.superPrev = inputNode.superPrev
+            inputNode.superNext == None
+            inputNode.superPrev == None
+
+    def getAll(self):
+        p = self.head
+        if p.superNext != None:
+            while p.superNext != None:
+                p = p.superNext
+                print(p.data + z.__str__())
 
     def __str__(self):
         s = ""
