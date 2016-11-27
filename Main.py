@@ -1,14 +1,18 @@
 import time
 import re
 import glob, os
+import sys
 #Stack Data Structure import
 from Stack import Stack
 from TST import NodeTST,TST
+from Trie import Trie,NodeTrie
 
 #LinkedList Data Structure import
 from LinkedList import LinkedList,Node
 
 if __name__ == "__main__":
+    man = Trie()
+    man.add(Node('fuck'))
     start_time = time.time()
     i=0
     motherTree = TST()
@@ -26,8 +30,7 @@ if __name__ == "__main__":
     sum =0
     total = 0
 
-
-
+    print('=', end=" ")
     # Total number of Files
 
     for root, dirs, files in os.walk(dir):
@@ -38,7 +41,9 @@ if __name__ == "__main__":
 
 
 
-
+    u=0
+    print('=', end=" ")
+    print()
     for subdir, dirs, files in os.walk(dir):
         for file in files:
             if file.endswith('.txt'):

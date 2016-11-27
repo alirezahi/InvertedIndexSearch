@@ -71,14 +71,12 @@ class LinkedList():
                 nameOfLastDocument = p.documentName
                 print(p.documentName)
             print( '| -> ( ... ' + p.prev.data +' '+ p.data +' '+ p.next.data +' ' + ' ... )')
-    def __str__(self):
-        s = ""
-        p = self.head
-        if p!=None:
-            while p.next != None :
-                s += p.data
-                p = p.next
-            s += p.data
-        return s
+
+    def removeAll(self):
+        current_node = self.head
+        while current_node.next != None:
+            current_node = current_node.next
+            if current_node.superNext:
+                self.SuperRemove(current_node)
 
 # <--End of Creating Class LinkedList-->

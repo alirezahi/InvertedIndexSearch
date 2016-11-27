@@ -18,7 +18,7 @@ class TST():
         self.root = self.pushWord(self.root,nodeOfWord,value,0)
 
     def pushWord(self, node, nodeOfWord, value, charIndex):
-        charOfWord = nodeOfWord.data[charIndex]
+        charOfWord = nodeOfWord.data[charIndex].lower()
 
         if node == None:
             node = NodeTST(charOfWord)
