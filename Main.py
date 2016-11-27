@@ -6,11 +6,17 @@ import sys
 from Stack import Stack
 from TST import NodeTST,TST
 from Trie import Trie,NodeTrie
+from BST import BST , NodeBST
 
 #LinkedList Data Structure import
 from LinkedList import LinkedList,Node
 
 if __name__ == "__main__":
+    you = BST()
+    you.add(Node('reza'))
+    you.add(Node('ali'))
+    you.traverse()
+    print(you.get('reza').word)
     man = Trie()
     start_time = time.time()
     i=0
