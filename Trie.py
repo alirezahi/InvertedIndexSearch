@@ -8,11 +8,11 @@ class NodeTrie():
         self.completeWord = False
 
     def addChild(self, character):
-            self.child[character] = NodeTrie(character)
+        self.child[character] = NodeTrie(character)
 
 class Trie():
     def __init__(self):
-        self.root = NodeTrie()
+        self.root = NodeTrie('')
 
     def add(self, node_of_word):
         current_node = self.root
@@ -20,7 +20,6 @@ class Trie():
             if letter.lower() not in current_node.child:
                 current_node.addChild(letter.lower())
             current_node = current_node.child[letter.lower()]
-            print(current_node.character)
         current_node.refrence.SuperAdd(node_of_word)
         current_node.completeWord = True
 
@@ -32,4 +31,11 @@ class Trie():
             current_node = current_node.child[letter.lower()]
         return current_node
 
-
+    def traverse(self,current_node=None,charWord=''):
+        if current_node == None:
+            current_node = self.root
+        for current_child in current_node.child.values():
+            if current_child != None:
+                self.traverse(current_node=current_child,charWord=charWord+current_node.character)
+        if current_node.completeWord:
+            print(charWord+current_node.character)

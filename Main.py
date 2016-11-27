@@ -12,7 +12,6 @@ from LinkedList import LinkedList,Node
 
 if __name__ == "__main__":
     man = Trie()
-    man.add(Node('fuck'))
     start_time = time.time()
     i=0
     motherTree = TST()
@@ -39,11 +38,22 @@ if __name__ == "__main__":
 
     # Total number of Files
 
+    # Trie Research
+    for subdir, dirs, files in os.walk(dir):
+        for file in files:
+            if file.endswith('.txt'):
+                with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
+                    fileLinkedList = LinkedList(documentName=file[:-4])
+                    DATA = myfile.read().replace('\n', ' ')
+                    for word in re.findall(r"[\w']+", DATA):
+                        node = fileLinkedList.add(word)
+                        man.add(node)
+    man.traverse()
+    # Trie Research
 
 
-    u=0
-    print('=', end=" ")
-    print()
+
+    # TST Search
     for subdir, dirs, files in os.walk(dir):
         for file in files:
             if file.endswith('.txt'):
@@ -54,7 +64,12 @@ if __name__ == "__main__":
                         node = fileLinkedList.add(word)
                         motherTree.push(node, i)
                         i = i + 1
+    motherTree.traverse()
+    # motherTree.get('people')
+    # TST Search
 
-    motherTree.get('people')
-    # motherTree.traverse()
+
+
+
+
     print("--- %s seconds ---" % (time.time() - start_time))

@@ -74,7 +74,7 @@ class LinkedList():
 
     def removeAll(self):
         current_node = self.head
-        while current_node.next != None:
+        while current_node.next != self.head:
             current_node = current_node.next
             if current_node.superNext:
                 self.SuperRemove(current_node)
