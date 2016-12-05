@@ -12,6 +12,7 @@ from BST import BST , NodeBST
 from LinkedList import LinkedList,Node
 
 if __name__ == "__main__":
+    file_names = Trie()
     you = BST()
     you.add(Node('reza'))
     you.add(Node('ali'))
@@ -56,21 +57,22 @@ if __name__ == "__main__":
                         man.add(node)
     man.traverse()
     # Trie Research
+    file_names.traverse()
 
 
 
     # TST Search
-    for subdir, dirs, files in os.walk(dir):
-        for file in files:
-            if file.endswith('.txt'):
-                with open(os.path.join(subdir, file), 'r+',errors='ignore') as myfile:
-                    fileLinkedList = LinkedList(documentName=file[:-4])
-                    DATA = myfile.read().replace('\n', ' ')
-                    for word in re.findall(r"[\w']+", DATA):
-                        node = fileLinkedList.add(word)
-                        motherTree.push(node, i)
-                        i = i + 1
-    motherTree.traverse()
+    # for subdir, dirs, files in os.walk(dir):
+    #     for file in files:
+    #         if file.endswith('.txt'):
+    #             with open(os.path.join(subdir, file), 'r+',errors='ignore') as myfile:
+    #                 fileLinkedList = LinkedList(documentName=file[:-4])
+    #                 DATA = myfile.read().replace('\n', ' ')
+    #                 for word in re.findall(r"[\w']+", DATA):
+    #                     node = fileLinkedList.add(word)
+    #                     motherTree.push(node, i)
+    #                     i = i + 1
+    # motherTree.traverse()
     # motherTree.get('people')
     # TST Search
 
