@@ -75,6 +75,11 @@ from tkinter.messagebox import showerror
 # text.tag_config("start", background="black", foreground="green")
 # root.mainloop()
 
+from Stack import Stack
+main_stack = Stack()
+secondary_stack = Stack()
+main_command_line = Entry
+
 from tkinter import *
 import tkinter.filedialog
 
@@ -85,10 +90,25 @@ def askDirectory(text_label):
     text_label.insert(0,str(dir))
     return dir
 
+def tab(arg):
+    print("tab pressed")
+    return 'break'
 
+def enter(arg):
+    main_stack.push(main_command_line.get())
+    print(main_command_line.get())
+    main_command_line.delete(0,END)
+    print("enter pressed")
+    return 'break'
+
+def callback(sv,e):
+    if (len(sv.get())>0 and sv.get()[-1] == ''):
+        if not main_stack.isEmpty():
+            e.delete(0,END)
+            e.insert(0,main_stack.pop())
+    print (sv.get())
 
 directory_var = ""
-
 
 
 if __name__ == '__main__':
@@ -121,7 +141,7 @@ if __name__ == '__main__':
 
     text.configure(yscrollcommand=scroll.set)
     text.insert(INSERT,'u only live twice')
-    text.config(state=DISABLED)
+    # text.config(state=DISABLED)
 
     search_ds = LabelFrame(root , text='Search Data Structure:')
     search_ds.pack()
@@ -141,8 +161,13 @@ if __name__ == '__main__':
     command_line_frame = Frame(root)
     command_line_frame.pack()
 
-    command_line = Entry(command_line_frame , width=40)
+    sv = StringVar()
+    command_line = Entry(command_line_frame , width=40,textvariable=sv)
+    sv.trace("w", lambda name, index, mode, sv=sv: callback(sv,command_line))
+    command_line.bind('<Tab>', tab)
+    command_line.bind('<Return>', enter)
     command_line.pack(side=LEFT)
+    main_command_line = command_line
 
     buttons_frame = Frame(root)
     buttons_frame.pack()
