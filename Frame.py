@@ -74,17 +74,19 @@ from tkinter.messagebox import showerror
 # text.tag_config("here", background="yellow", foreground="blue")
 # text.tag_config("start", background="black", foreground="green")
 # root.mainloop()
-
+from Trie import Trie,NodeTrie
+from LinkedList import Node
 from Stack import Stack
 main_stack = Stack()
 secondary_stack = Stack()
 main_command_line = Entry
 
+
+
 from tkinter import *
 import tkinter.filedialog
 
 def askDirectory(text_label):
-    print('bitch')
     dir = tkinter.filedialog.askdirectory(initialdir='/')
     text_label.delete(0,END)
     text_label.insert(0,str(dir))
@@ -98,20 +100,38 @@ def enter(arg):
     main_stack.push(main_command_line.get())
     print(main_command_line.get())
     main_command_line.delete(0,END)
-    print("enter pressed")
     return 'break'
 
 def callback(sv,e):
     if (len(sv.get())>0 and sv.get()[-1] == ''):
         if not main_stack.isEmpty():
             e.delete(0,END)
-            e.insert(0,main_stack.pop())
-    print (sv.get())
+            secondary_stack.push(main_stack.pop())
+            e.insert(0, secondary_stack.peek())
+        else :
+            e.delete(0, END)
+            e.insert(0, secondary_stack.peek())
+    elif (len(sv.get())>0 and sv.get()[-1] == ''):
+        if not secondary_stack.isEmpty():
+            e.delete(0, END)
+            main_stack.push(secondary_stack.pop())
+            if secondary_stack.isEmpty():
+                e.insert(0,'')
+            else:
+                e.insert(0, secondary_stack.peek())
+        else :
+            e.delete(0, END)
+            e.insert(0, '')
 
 directory_var = ""
 
-
+from TST import TST
 if __name__ == '__main__':
+    myBst = TST()
+    print(myBst.height())
+
+    commands_tree = Trie()
+    commands_tree.traverse(current_node=commands_tree.get('wor'))
 
     search_var = IntVar
 
@@ -140,8 +160,8 @@ if __name__ == '__main__':
     text.pack()
 
     text.configure(yscrollcommand=scroll.set)
-    text.insert(INSERT,'u only live twice')
-    # text.config(state=DISABLED)
+    text.insert(INSERT,'u only live twice\n')
+    text.config(state=DISABLED)
 
     search_ds = LabelFrame(root , text='Search Data Structure:')
     search_ds.pack()

@@ -79,3 +79,16 @@ class TST():
             self.traverse(node.middleChild,charWord+node.character)
         if(node.completeWord):
             print (charWord+node.character)
+
+    def height(self, node=None, isRoot=True):
+        if isRoot:
+            node = self.root
+        if node == None:
+            return -1
+        leftH = self.height(node=node.leftChild, isRoot=False)
+        rightH = self.height(node=node.rightChild, isRoot=False)
+        middleH = self.height(node=node.middleChild, isRoot=False)
+        if isRoot:
+            return max(leftH,rightH,middleH)+2
+        else:
+            return max(leftH, rightH, middleH) + 1

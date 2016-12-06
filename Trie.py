@@ -39,3 +39,11 @@ class Trie():
                 self.traverse(current_node=current_child,charWord=charWord+current_node.character)
         if current_node.completeWord:
             print(charWord+current_node.character)
+
+    def height(self,node=None):
+        if node == None:
+            node = self.root
+        if len(node.child) == 0:
+            return 1
+        else :
+            return max(self.height(node = c) for c in node.child.values()) + 1

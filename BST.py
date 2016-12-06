@@ -58,3 +58,15 @@ class BST():
             self.traverse(node=node.leftChild)
         if node.rightChild != None:
             self.traverse(node=node.rightChild)
+
+    def height(self,node = None,isRoot = True):
+        if isRoot:
+            node = self.root
+        if node == None:
+            return -1
+        leftH = self.height(node = node.leftChild,isRoot=False)
+        rightH = self.height(node = node.rightChild,isRoot=False)
+        if isRoot:
+            return max(leftH,rightH)+2
+        else:
+            return max(leftH,rightH)+1
