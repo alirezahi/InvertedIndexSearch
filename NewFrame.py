@@ -1,15 +1,17 @@
-from tkinter import *
-
-def callback(sv):
-    if (len(sv.get())>0 and sv.get()[-1] == ''):
-        print('fuck')
-        e.delete(0,END)
-        e.insert(0,'a')
-    print (sv.get())
-
-root = Tk()
-sv = StringVar()
-sv.trace("w", lambda name, index, mode, sv=sv: callback(sv))
-e = Entry(root, textvariable=sv)
-e.pack()
-root.mainloop()
+# from tkinter import *
+# import time
+#
+# if __name__ == '__main__':
+#     root = Tk()
+#     label = Label(root, text='sdaf', fg='red', background='green')
+#     label.config(background='black')
+#     label.pack()
+#     # time.sleep(0.1)
+#     label.config(background='black')
+#     # time.sleep(0.1)
+#     label.config(background='red')
+#     # time.sleep(0.1)
+#
+#     root.mainloop()
+#     label.config(background='blue')
+#

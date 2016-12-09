@@ -29,7 +29,6 @@
 # root.destroy()
 
 
-from tkinter import *
 from tkinter.filedialog import askopenfilename
 from tkinter.messagebox import showerror
 #
@@ -74,17 +73,23 @@ from tkinter.messagebox import showerror
 # text.tag_config("here", background="yellow", foreground="blue")
 # text.tag_config("start", background="black", foreground="green")
 # root.mainloop()
-from Trie import Trie,NodeTrie
-from LinkedList import Node
+# from Trie import Trie,NodeTrie
+# from LinkedList import Node
 from Stack import Stack
-main_stack = Stack()
-secondary_stack = Stack()
-main_command_line = Entry
-
-
 
 from tkinter import *
 import tkinter.filedialog
+
+main_command_line = Entry
+
+main_stack = Stack()
+secondary_stack = Stack()
+import os
+
+directory_text_field_global = None
+
+
+resultText = None
 
 def askDirectory(text_label):
     dir = tkinter.filedialog.askdirectory(initialdir='/')
@@ -96,10 +101,31 @@ def tab(arg):
     print("tab pressed")
     return 'break'
 
+
+def write_result(inputStr):
+    resultText.config(state=tkinter.NORMAL)
+    resultText.insert(INSERT, inputStr)
+    resultText.config(state=tkinter.DISABLED)
+
+
+
 def enter(arg):
-    main_stack.push(main_command_line.get())
-    print(main_command_line.get())
+    while not secondary_stack.isEmpty():
+        main_stack.push(secondary_stack.pop())
+    command_line_content = main_command_line.get()
+    main_stack.push(command_line_content)
+    print(command_line_content)
     main_command_line.delete(0,END)
+
+    sytax_of_command_line(command_line_content)
+
+    return 'break'
+
+def Reset():
+    words_tree = None
+    resultText.config(state=tkinter.NORMAL)
+    resultText.delete('1.0',END)
+    resultText.config(state=tkinter.DISABLED)
     return 'break'
 
 def callback(sv,e):
@@ -108,9 +134,12 @@ def callback(sv,e):
             e.delete(0,END)
             secondary_stack.push(main_stack.pop())
             e.insert(0, secondary_stack.peek())
-        else :
+        elif not secondary_stack.isEmpty() :
             e.delete(0, END)
             e.insert(0, secondary_stack.peek())
+        else :
+            e.delete(0, END)
+            e.insert(0, '')
     elif (len(sv.get())>0 and sv.get()[-1] == ''):
         if not secondary_stack.isEmpty():
             e.delete(0, END)
@@ -126,15 +155,218 @@ def callback(sv,e):
 directory_var = ""
 
 from TST import TST
-if __name__ == '__main__':
-    myBst = TST()
-    print(myBst.height())
+from BST import BST
+from Trie import Trie
 
-    commands_tree = Trie()
-    commands_tree.traverse(current_node=commands_tree.get('wor'))
+stopwordsTST = None
+stopwordsBST = None
+stopwordsTrie = None
+
+def Stopwords_def():
+    from LinkedList import Node
+
+    # <-- Start Listing Stopwords in TST from the list of "Stopwords" -->
+    stopwordsTST = TST()
+    with open('StopWords.txt', 'r+') as myfile:
+        DATA = myfile.read().replace('\n', ' ')
+        for stopword in re.findall(r"[\w']+", DATA):
+            node = Node(data=stopword)
+            stopwordsTST.push(node, 0)
+    # <-- End Listing Stopwords TST -->
+
+
+
+    # <-- Start Listing Stopwords in BST from the list of "Stopwords" -->
+    stopwordsBST = BST()
+    with open('StopWords.txt', 'r+') as myfile:
+        DATA = myfile.read().replace('\n', ' ')
+        for stopword in re.findall(r"[\w']+", DATA):
+            node = Node(data=stopword)
+            stopwordsBST.add(node)
+    # <-- End Listing Stopwords BST -->
+
+    # <-- Start Listing Stopwords in Trie from the list of "Stopwords" -->
+    stopwordsTrie = Trie()
+    with open('StopWords.txt', 'r+') as myfile:
+        DATA = myfile.read().replace('\n', ' ')
+        for stopword in re.findall(r"[\w']+", DATA):
+            node = Node(data=stopword)
+            stopwordsTrie.add(node)
+    # <-- End Listing Stopwords Trie -->
+
+words_tree = None
+from LinkedList import LinkedList
+files_list = []
+def Build(directory_entered,tree_type):
+    if os.path.isdir(directory_entered.get()):
+        from LinkedList import LinkedList
+        if tree_type.get() == 1:
+            # TST Tree
+            global words_tree
+            words_tree = TST()
+            i=0
+            for subdir, dirs, files in os.walk(directory_entered.get()):
+                for file in files:
+                    if file.endswith('.txt'):
+                        with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
+                            fileLinkedList = LinkedList(documentName=file[:-4])
+                            files_list.append(fileLinkedList)
+                            DATA = myfile.read().replace('\n', ' ')
+                            for word in re.findall(r"[\w']+", DATA):
+                                node = fileLinkedList.add(word)
+                                if stopwordsTST.get(word) == None:
+                                    words_tree.push(node, i)
+                                    i = i + 1
+            # TST Tree
+        elif tree_type.get() == 2:
+            # BST Search
+            words_tree = BST()
+            for subdir, dirs, files in os.walk(dir):
+                for file in files:
+                    if file.endswith('.txt'):
+                        with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
+                            fileLinkedList = LinkedList(documentName=file[:-4])
+                            DATA = myfile.read().replace('\n', ' ')
+                            for word in re.findall(r"[\w']+", DATA):
+                                node = fileLinkedList.add(word)
+                                if stopwordsBST.get(word) == None:
+                                    words_tree.add(node)
+            # BST Search
+
+            # BST Search
+        elif tree_type.get() == 3:
+            words_tree = Trie()
+    else :
+        tkinter.messagebox.showinfo("Directory", "The Directory Entered doesn't Exist")
+
+def sytax_of_command_line(command):
+    # <-- It checks the sytax of input command by automata -->
+    command_words = command.split()
+    current_state=0
+    max_non_error_state = 15
+    i=0
+    while i<len(command_words) and current_state<max_non_error_state:
+        if current_state == 0 :
+            if command_words[0].lower() == 'add':
+                current_state = 1
+            elif command_words[0].lower() == 'del':
+                current_state = 2
+            elif command_words[0].lower() == 'update':
+                current_state = 3
+            elif command_words[0].lower() == 'list':
+                current_state = 4
+            elif command_words[0].lower() == 'search':
+                current_state = 5
+            else :
+                current_state = 14
+        elif current_state == 1 :
+            first_quote = re.match(r'^"(.*)', command_words[1])
+            second_quote = re.match(r'(.*)"$', command_words[-1])
+            if first_quote and second_quote:
+                if command_words[1] == '\"':
+                    del command_words[1]
+                else:
+                    command_words[1] = command_words[1].replace('\"', '')
+                if command_words[-1] == '\"':
+                    del command_words[-1]
+                else:
+                    command_words[-1] = command_words[-1].replace('\"', '')
+                resultText.config(state=tkinter.NORMAL)
+                resultText.insert(INSERT, command_words)
+                resultText.config(state=tkinter.DISABLED)
+            else:
+                resultText.config(state=tkinter.NORMAL)
+                resultText.insert(INSERT, 'Error Happend')
+                resultText.config(state=tkinter.DISABLED)
+            return True
+        elif current_state == 2:
+            first_quote = re.match(r'^"(.*)', command_words[1])
+            second_quote = re.match(r'(.*)"$', command_words[-1])
+            if first_quote and second_quote:
+                if command_words[1] == '\"':
+                    del command_words[1]
+                else :
+                    command_words[1] = command_words[1].replace('\"', '')
+                if command_words[-1] == '\"':
+                    del command_words[-1]
+                else :
+                    command_words[-1] = command_words[-1].replace('\"', '')
+                resultText.config(state=tkinter.NORMAL)
+                resultText.insert(INSERT, command_words)
+                resultText.config(state=tkinter.DISABLED)
+            else:
+                resultText.config(state=tkinter.NORMAL)
+                resultText.insert(INSERT, 'Error Happend')
+                resultText.config(state=tkinter.DISABLED)
+            return True
+        elif current_state == 3:
+            first_quote = re.match(r'^"(.*)', command_words[1])
+            second_quote = re.match(r'(.*)"$', command_words[-1])
+            if first_quote and second_quote:
+                if not first_quote.group(1) == '\"':
+                    command_words[1] = command_words[1].replace('\"', '')
+                if not second_quote.group(1) == '\"':
+                    command_words[-1] = command_words[-1].replace('\"', '')
+                resultText.config(state=tkinter.NORMAL)
+                resultText.insert(INSERT, command_words)
+                resultText.config(state=tkinter.DISABLED)
+            else:
+                resultText.config(state=tkinter.NORMAL)
+                resultText.insert(INSERT, 'Error Happend')
+                resultText.config(state=tkinter.DISABLED)
+            return True
+        elif current_state == 4:
+            if command_words[1] == '-w':
+                current_state = 9
+            elif command_words[1] == '-l':
+                current_state = 10
+            elif command_words[1] == '-f':
+                current_state = 11
+        elif current_state == 5:
+            if command_words[1] == '-s':
+                current_state = 12
+            elif command_words[1] == '-w':
+                current_state = 13
+        elif current_state == 6:
+            return True
+        elif current_state == 7:
+            return True
+        elif current_state == 8:
+            return True
+        elif current_state == 9:
+            write_result(words_tree.traverse_words_documents())
+            return True
+        elif current_state == 10:
+            global files_list
+            for file in files_list:
+                write_result(file.documentName+' ')
+            write_result('\nNumber of listed Docs = ' + files_list.__len__().__str__()+'\n')
+            return True
+        elif current_state == 11:
+            number_of_files = 0
+            for subdir, dirs, files in os.walk(directory_text_field_global.get()):
+                for file in files:
+                    if file.endswith('.txt'):
+                        write_result(file[:-4] + ' ')
+                        number_of_files = number_of_files + 1
+            write_result('\nNumber of all Docs = ' + number_of_files.__str__()+'\n')
+            return True
+        elif current_state == 12:
+            return True
+        elif current_state == 13:
+            return True
+        else:
+            resultText.config(state=tkinter.NORMAL)
+            resultText.insert(INSERT, 'Error : Unkown Command\n')
+            resultText.config(state=tkinter.DISABLED)
+            return True
+    return True
+
+if __name__ == '__main__':
 
     search_var = IntVar
 
+    Stopwords_def()
 
     root = Tk()
     frame = Frame(root)
@@ -148,6 +380,7 @@ if __name__ == '__main__':
 
     directory_text_field = Entry(directoryframe,textvariable = directory_var,width=30)
     directory_text_field.pack(side = LEFT)
+    directory_text_field_global = directory_text_field
 
     blackbutton = Button(directoryframe, text="Browse", command = lambda : askDirectory(directory_text_field))
     blackbutton.pack( side = RIGHT)
@@ -160,8 +393,8 @@ if __name__ == '__main__':
     text.pack()
 
     text.configure(yscrollcommand=scroll.set)
-    text.insert(INSERT,'u only live twice\n')
-    text.config(state=DISABLED)
+    text.config(state=tkinter.DISABLED)
+    resultText = text
 
     search_ds = LabelFrame(root , text='Search Data Structure:')
     search_ds.pack()
@@ -178,7 +411,7 @@ if __name__ == '__main__':
     R3 = Radiobutton(search_ds, text="Trie", variable=var, value=3)
     R3.pack( side = LEFT )
 
-    command_line_frame = Frame(root)
+    command_line_frame = LabelFrame(root,text='Command Line : ')
     command_line_frame.pack()
 
     sv = StringVar()
@@ -192,20 +425,37 @@ if __name__ == '__main__':
     buttons_frame = Frame(root)
     buttons_frame.pack()
 
-    build_button = Button(buttons_frame, text="Build", command=lambda: askDirectory(directory_text_field))
+    build_button = Button(buttons_frame, text="Build", command=lambda: Build(directory_text_field,var))
     build_button.pack(side=LEFT)
 
-    build_button = Button(buttons_frame, text="Reset", command=lambda: askDirectory(directory_text_field))
+    build_button = Button(buttons_frame, text="Reset", command=lambda: Reset())
     build_button.pack(side=LEFT)
+
+    build_button = Button(buttons_frame, text="Exit", command=lambda: root.destroy())
+    build_button.pack(side=RIGHT)
 
     build_button = Button(buttons_frame, text="Help", command=lambda: askDirectory(directory_text_field))
     build_button.pack(side=RIGHT)
 
-    build_button = Button(buttons_frame, text="Exit", command=lambda: askDirectory(directory_text_field))
-    build_button.pack(side=RIGHT)
+
+
+    from TST import *
+    from Trie import *
+    from LinkedList import Node, LinkedList
+
+    stopwordsTST = Trie()
+    with open('StopWords.txt', 'r+') as myfile:
+        fileLinkedList = LinkedList(documentName='stopword')
+        DATA = myfile.read().replace('\n', ' ')
+        for stopword in re.findall(r"[\w']+", DATA):
+            node = fileLinkedList.add(stopword)
+            print(node.data)
+            stopwordsTST.add(node)
+    # s = stopwordsTST.get('about').refrence.getAll()
+    # write_result(s)
+    # write_result(stopwordsTST.traverse())
 
     root.mainloop()
-
 
 
 

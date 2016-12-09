@@ -1,3 +1,4 @@
+
 # <--Creating Class LinkedList-->
 class Node():
     def __init__( self, data=None,next=None,prev=None,documentName = None):
@@ -7,11 +8,13 @@ class Node():
         self.superNext = None
         self.superPrev = None
         self.documentName = documentName
+        self.isHead = False
 
 class LinkedList():
 
     def __init__( self ,documentName = None) :
         self.head = Node(documentName)
+        self.head.isHead = True
         self.head.prev = None
         self.head.next = None
         self.documentName = documentName
@@ -26,7 +29,7 @@ class LinkedList():
             node.prev = self.head.prev
             self.head.prev.next = node
             self.head.prev = node
-            self.head.prev.next = self.head
+            node.next = self.head
         return node
     def SuperAdd(self,node):
         if self.head.superNext == None:
@@ -37,7 +40,7 @@ class LinkedList():
             self.head.superPrev.superNext = node
             node.superPrev = self.head.superPrev
             self.head.superPrev = node
-            self.head.superPrev.superNext = self.head
+            node.superNext = self.head
         return node
 
     def search(self, k):
@@ -65,12 +68,41 @@ class LinkedList():
         i=0
         p = self.head
         nameOfLastDocument = ''
-        while p.superNext != self.head:
+        result_str = ''
+        while p.superNext != self.head and p.superNext != None:
+            result_str = result_str + '\n'
             p = p.superNext
             if nameOfLastDocument != p.documentName:
                 nameOfLastDocument = p.documentName
-                print(p.documentName)
-            print( '| -> ( ... ' + p.prev.data +' '+ p.data +' '+ p.next.data +' ' + ' ... )')
+                result_str = result_str + p.documentName+'\n'
+            result_str = result_str + '( ...'
+            if p.prev != None and not p.prev.isHead and p.prev.prev != None and not p.prev.prev.isHead :
+                result_str = result_str + ' ' + p.prev.prev.data
+            if p.prev != None and not p.prev.isHead :
+                result_str = result_str + ' ' + p.prev.data
+            result_str = result_str + ' ' + p.data
+            if p.next != None and not p.next.isHead:
+                result_str = result_str + ' ' + p.next.data
+            if p.next != None and not p.next.isHead and p.next.next != None and not p.next.next.isHead:
+                result_str = result_str + ' ' + p.next.next.data
+            result_str = result_str + ' ... )'
+            # print( '| -> ( ... ' + p.prev.data +' '+ p.data +' '+ p.next.data +' ' + ' ... )')
+        return result_str
+
+    def getDocuments(self):
+        i = 0
+        p = self.head
+        nameOfLastDocument = ''
+        result_str = ''
+        if p.superNext != self.head and p.superNext != None:
+            result_str = result_str + '| ' + p.superNext.data + ' --> '
+        while p.superNext != self.head and p.superNext != None:
+            p = p.superNext
+            if nameOfLastDocument != p.documentName:
+                nameOfLastDocument = p.documentName
+                result_str = result_str + p.documentName + ' '
+            # print( '| -> ( ... ' + p.prev.data +' '+ p.data +' '+ p.next.data +' ' + ' ... )')
+        return result_str + '\n'
 
     def removeAll(self):
         current_node = self.head

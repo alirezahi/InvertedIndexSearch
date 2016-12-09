@@ -12,6 +12,7 @@ class NodeBST():
 class BST():
 
     def __init__(self):
+        self.i = 0
         self.root = NodeBST('m',isUsableWord=False)
 
     def add(self,node_of_word):
@@ -53,7 +54,8 @@ class BST():
         if node == None:
             node = self.root
         else:
-            print(node.word)
+            self.i = self.i+1
+            print(self.i.__str__()+' '+node.word)
         if node.leftChild != None:
             self.traverse(node=node.leftChild)
         if node.rightChild != None:

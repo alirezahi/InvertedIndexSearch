@@ -12,6 +12,7 @@ class NodeTST():
 
 class TST():
     def __init__(self):
+        self.i = 0
         self.root = NodeTST('m')
 
     def push(self,nodeOfWord,value):
@@ -64,21 +65,38 @@ class TST():
             return self.getWord(node.middleChild,word,charIndex+1)
 
         else :
-            if node.refrence == None:
-                return None
-            return node.refrence.getAll()
+            # if node.refrence.head.superNext == None or node.refrence.head.superNext == node.refrence.head:
+            #     return None
+            return node
+            # return node.refrence.getAll()
 
-    def traverse(self,node=None,charWord=''):
+    def traverse(self,node=None,charWord='',sentence = ''):
         if node == None:
             node = self.root
         if(node.leftChild != None):
-            self.traverse(node.leftChild,charWord)
+            sentence = self.traverse(node.leftChild,charWord,sentence)
         if (node.rightChild != None):
-            self.traverse(node.rightChild,charWord)
+            sentence = self.traverse(node.rightChild,charWord,sentence)
         if (node.middleChild != None):
-            self.traverse(node.middleChild,charWord+node.character)
+            sentence = self.traverse(node.middleChild,charWord+node.character,sentence)
         if(node.completeWord):
-            print (charWord+node.character)
+            self.i=self.i+1
+            return sentence + (self.i.__str__()+' '+charWord+node.character+'\n')
+        else : return sentence
+
+    def traverse_words_documents(self, node=None, charWord='', sentence=''):
+        if node == None:
+            node = self.root
+        if (node.leftChild != None):
+            sentence = self.traverse_words_documents(node.leftChild, charWord, sentence)
+        if (node.rightChild != None):
+            sentence = self.traverse_words_documents(node.rightChild, charWord, sentence)
+        if (node.middleChild != None):
+            sentence = self.traverse_words_documents(node.middleChild, charWord + node.character, sentence)
+        if (node.completeWord):
+            return sentence + node.refrence.getDocuments()
+        else:
+            return sentence
 
     def height(self, node=None, isRoot=True):
         if isRoot:

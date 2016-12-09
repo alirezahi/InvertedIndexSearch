@@ -1,5 +1,7 @@
 from LinkedList import LinkedList,Node
 
+
+
 class NodeTrie():
     def __init__(self,character = None):
         self.character = character
@@ -12,6 +14,7 @@ class NodeTrie():
 
 class Trie():
     def __init__(self):
+        self.i = 0
         self.root = NodeTrie('')
 
     def add(self, node_of_word):
@@ -31,14 +34,18 @@ class Trie():
             current_node = current_node.child[letter.lower()]
         return current_node
 
-    def traverse(self,current_node=None,charWord=''):
+    def traverse(self,current_node=None,charWord='',sentence= ''):
         if current_node == None:
             current_node = self.root
         for current_child in current_node.child.values():
             if current_child != None:
-                self.traverse(current_node=current_child,charWord=charWord+current_node.character)
+                sentence = self.traverse(current_node=current_child,charWord=charWord+current_node.character,sentence=sentence)
         if current_node.completeWord:
-            print(charWord+current_node.character)
+            self.i=self.i+1
+            return sentence + (self.i.__str__()+' '+charWord+current_node.character + '\n')
+        else:
+            return sentence
+
 
     def height(self,node=None):
         if node == None:

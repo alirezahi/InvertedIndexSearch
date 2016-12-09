@@ -13,35 +13,57 @@ from LinkedList import LinkedList,Node
 
 if __name__ == "__main__":
     file_names = Trie()
-    you = BST()
-    you.add(Node('reza'))
-    you.add(Node('ali'))
-    you.traverse()
-    print(you.get('reza').word)
     man = Trie()
     start_time = time.time()
     i=0
     motherTree = TST()
-    # <-- Start Listing Stopwords from the list of "Stopwords" -->
-    stopwords = TST()
+
+
+    # <-- Start Listing Stopwords in TST from the list of "Stopwords" -->
+
+    stopwordsTST = TST()
     with open('StopWords.txt', 'r+') as myfile:
         DATA = myfile.read().replace('\n', ' ')
         for stopword in re.findall(r"[\w']+", DATA):
             node = Node(data=stopword)
-            stopwords.push(node, 0)
+            stopwordsTST.push(node, 0)
+    stopwordsTST.get('is').refrence.getAll()
+    # <-- End Listing Stopwords TST -->
 
-    # End Listing Stopwords
+
+
+    # <-- Start Listing Stopwords in BST from the list of "Stopwords" -->
+
+    stopwordsBST = BST()
+    with open('StopWords.txt', 'r+') as myfile:
+        DATA = myfile.read().replace('\n', ' ')
+        for stopword in re.findall(r"[\w']+", DATA):
+            node = Node(data=stopword)
+            stopwordsBST.add(node)
+
+    # <-- End Listing Stopwords BST -->
+
+
+    # <-- Start Listing Stopwords in Trie from the list of "Stopwords" -->
+
+    stopwordsTrie = Trie()
+    with open('StopWords.txt', 'r+') as myfile:
+        DATA = myfile.read().replace('\n', ' ')
+        for stopword in re.findall(r"[\w']+", DATA):
+            node = Node(data=stopword)
+            stopwordsTrie.add(node)
+
+    # <-- End Listing Stopwords Trie -->
 
     dir = input('Please Enter the direction of File: ')
     sum =0
     total = 0
 
-    print('=', end=" ")
     # Total number of Files
 
-    for root, dirs, files in os.walk(dir):
-        total += len([file for file in files if file.endswith('.txt')])
-    print(total)
+    # for root, dirs, files in os.walk(dir):
+    #     total += len([file for file in files if file.endswith('.txt')])
+    # print(total)
 
     # Total number of Files
 
@@ -54,29 +76,51 @@ if __name__ == "__main__":
                     DATA = myfile.read().replace('\n', ' ')
                     for word in re.findall(r"[\w']+", DATA):
                         node = fileLinkedList.add(word)
-                        man.add(node)
+                        if stopwordsTrie.get(word) == None:
+                            man.add(node)
     man.traverse()
+
     # Trie Research
-    file_names.traverse()
+    # file_names.traverse()
+
+
 
 
 
     # TST Search
-    # for subdir, dirs, files in os.walk(dir):
-    #     for file in files:
-    #         if file.endswith('.txt'):
-    #             with open(os.path.join(subdir, file), 'r+',errors='ignore') as myfile:
-    #                 fileLinkedList = LinkedList(documentName=file[:-4])
-    #                 DATA = myfile.read().replace('\n', ' ')
-    #                 for word in re.findall(r"[\w']+", DATA):
-    #                     node = fileLinkedList.add(word)
-    #                     motherTree.push(node, i)
-    #                     i = i + 1
-    # motherTree.traverse()
+
+    for subdir, dirs, files in os.walk(dir):
+        for file in files:
+            if file.endswith('.txt'):
+                with open(os.path.join(subdir, file), 'r+',errors='ignore') as myfile:
+                    fileLinkedList = LinkedList(documentName=file[:-4])
+                    DATA = myfile.read().replace('\n', ' ')
+                    for word in re.findall(r"[\w']+", DATA):
+                        node = fileLinkedList.add(word)
+                        if stopwordsTST.get(word) == None:
+                            motherTree.push(node, i)
+                            i = i + 1
+    motherTree.traverse()
     # motherTree.get('people')
+
     # TST Search
 
+    # BST Search
 
+    myBst = BST()
+    for subdir, dirs, files in os.walk(dir):
+        for file in files:
+            if file.endswith('.txt'):
+                with open(os.path.join(subdir, file), 'r+',errors='ignore') as myfile:
+                    fileLinkedList = LinkedList(documentName=file[:-4])
+                    DATA = myfile.read().replace('\n', ' ')
+                    for word in re.findall(r"[\w']+", DATA):
+                        node = fileLinkedList.add(word)
+                        if stopwordsBST.get(word) == None:
+                            myBst.add(node)
+    myBst.traverse()
+
+    # BST Search
 
 
 
