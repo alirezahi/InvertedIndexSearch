@@ -38,6 +38,14 @@ class Trie():
         else :
             return None
 
+    def getNotCompleteWord(self,word):
+        current_node = self.root
+        for letter in word:
+            if letter.lower() not in current_node.child:
+                return None
+            current_node = current_node.child[letter.lower()]
+        return current_node
+
     def traverse(self,current_node=None,charWord='',sentence= ''):
         if current_node == None:
             current_node = self.root
@@ -72,3 +80,14 @@ class Trie():
             return 1
         else :
             return max(self.height(node = c) for c in node.child.values()) + 1
+
+    def auto_complete(self,data):
+        completed_word = data
+        middle_of_road = self.getNotCompleteWord(data)
+        while len(middle_of_road.child)<2:
+            if len(middle_of_road.child)==1:
+                [(a,middle_of_road)] = middle_of_road.child.items()
+                completed_word = completed_word + middle_of_road.character
+            elif len(middle_of_road.child) == 0:
+                return completed_word
+        return data

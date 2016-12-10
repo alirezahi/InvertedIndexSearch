@@ -3,6 +3,11 @@ from Stack import Stack
 from tkinter import *
 import tkinter.filedialog
 
+from TST import TST
+from BST import BST
+from Trie import Trie
+
+
 main_command_line = Entry
 
 main_stack = Stack()
@@ -20,7 +25,21 @@ def askDirectory(text_label):
     text_label.insert(0,str(dir))
     return dir
 
+from LinkedList import Node
+
+commands_tree = Trie()
+
+def Commands_Tree():
+    commands_tree.add(Node('list'))
+    commands_tree.add(Node('search'))
+    commands_tree.add(Node('add'))
+    commands_tree.add(Node('del'))
+    commands_tree.add(Node('update'))
+
 def tab(arg):
+    command_line_content = commands_tree.auto_complete(main_command_line.get())
+    main_command_line.delete(0, END)
+    main_command_line.insert(INSERT,command_line_content)
     print("tab pressed")
     return 'break'
 
@@ -76,9 +95,7 @@ def callback(sv,e):
 
 directory_var = ""
 
-from TST import TST
-from BST import BST
-from Trie import Trie
+
 
 stopwordsTST = None
 stopwordsBST = None
@@ -414,7 +431,10 @@ def sytax_of_command_line(command):
                     write_result('\nAny word found !!!\n---------------\n')
                 else:
                     write_result(words_tree.get(command_words[-1]).refrence.getAll())
-            current_state = 20     # <-- This live has to change -->
+            for word in command_words[2:]:
+                print(word)
+                if stopwordsTST.get(word) == None and words_tree.get(word) is not None:
+                    write_result(words_tree.get(word).refrence.getAll())
             return True
         elif current_state == 13:
             first_quote = re.match(r'^"(.*)', command_words[2])
@@ -443,6 +463,7 @@ if __name__ == '__main__':
     search_var = IntVar
 
     Stopwords_def()
+    Commands_Tree()
 
     root = Tk()
     frame = Frame(root)
