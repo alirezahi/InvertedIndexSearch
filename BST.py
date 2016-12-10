@@ -10,8 +10,8 @@ class NodeBST():
         self.refrence = LinkedList()
 
 class BST():
-
     def __init__(self):
+        self.number_of_words =0
         self.i = 0
         self.root = NodeBST('m',isUsableWord=False)
 
@@ -60,6 +60,24 @@ class BST():
             self.traverse(node=node.leftChild)
         if node.rightChild != None:
             self.traverse(node=node.rightChild)
+
+    def traverse_words_documents(self, node=None,sentence=''):
+        if node == None:
+            node = self.root
+        if node.leftChild != None:
+            sentence = sentence + self.traverse_words_documents(node=node.leftChild)
+        if node.rightChild != None:
+            sentence = sentence + self.traverse_words_documents(node=node.rightChild)
+        if node :
+            node_documents = node.refrence.getDocuments()
+            if node_documents is not '':
+                self.number_of_words = self.number_of_words+1
+            return sentence + node_documents
+    # def get_num_words(self):
+    #     global number_of_words
+    #     num = number_of_words
+    #     number_of_words=0
+    #     return num
 
     def height(self,node = None,isRoot = True):
         if isRoot:

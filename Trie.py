@@ -14,6 +14,7 @@ class NodeTrie():
 
 class Trie():
     def __init__(self):
+        self.number_of_words = 0
         self.i = 0
         self.root = NodeTrie('')
 
@@ -32,7 +33,10 @@ class Trie():
             if letter.lower() not in current_node.child:
                 return None
             current_node = current_node.child[letter.lower()]
-        return current_node
+        if current_node.completeWord:
+            return current_node
+        else :
+            return None
 
     def traverse(self,current_node=None,charWord='',sentence= ''):
         if current_node == None:
@@ -46,6 +50,20 @@ class Trie():
         else:
             return sentence
 
+    def traverse_words_documents(self, current_node=None, charWord='', sentence=''):
+        if current_node == None:
+            current_node = self.root
+        for current_child in current_node.child.values():
+            if current_child != None:
+                sentence = self.traverse_words_documents(current_node=current_child, charWord=charWord + current_node.character,
+                                         sentence=sentence)
+        if current_node.completeWord:
+            node_documents = current_node.refrence.getDocuments()
+            if node_documents is not '':
+                self.number_of_words = self.number_of_words + 1
+            return sentence + (current_node.refrence.getDocuments())
+        else:
+            return sentence
 
     def height(self,node=None):
         if node == None:

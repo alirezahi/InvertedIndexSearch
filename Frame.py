@@ -37,7 +37,6 @@ def enter(arg):
         main_stack.push(secondary_stack.pop())
     command_line_content = main_command_line.get()
     main_stack.push(command_line_content)
-    print(command_line_content)
     main_command_line.delete(0,END)
 
     sytax_of_command_line(command_line_content)
@@ -89,6 +88,7 @@ def Stopwords_def():
     from LinkedList import Node
 
     # <-- Start Listing Stopwords in TST from the list of "Stopwords" -->
+    global stopwordsTST
     stopwordsTST = TST()
     with open('StopWords.txt', 'r+') as myfile:
         DATA = myfile.read().replace('\n', ' ')
@@ -100,6 +100,7 @@ def Stopwords_def():
 
 
     # <-- Start Listing Stopwords in BST from the list of "Stopwords" -->
+    global stopwordsBST
     stopwordsBST = BST()
     with open('StopWords.txt', 'r+') as myfile:
         DATA = myfile.read().replace('\n', ' ')
@@ -109,6 +110,7 @@ def Stopwords_def():
     # <-- End Listing Stopwords BST -->
 
     # <-- Start Listing Stopwords in Trie from the list of "Stopwords" -->
+    global stopwordsTrie
     stopwordsTrie = Trie()
     with open('StopWords.txt', 'r+') as myfile:
         DATA = myfile.read().replace('\n', ' ')
@@ -220,13 +222,9 @@ def sytax_of_command_line(command):
                         if name_of_file in file:
                             file_exist = True
                 if [name_of_file_added for name_of_file_added in files_list if name_of_file_added.documentName == name_of_file].__len__()>0:
-                    resultText.config(state=tkinter.NORMAL)
-                    resultText.insert(INSERT, 'Error : Document already Exists!!!\n---------------\n')
-                    resultText.config(state=tkinter.DISABLED)
+                    write_result('Error : Document already Exists!!!\n---------------\n')
                 elif not file_exist:
-                    resultText.config(state=tkinter.NORMAL)
-                    resultText.insert(INSERT, 'Error : Document not Found!!!\n---------------\n')
-                    resultText.config(state=tkinter.DISABLED)
+                    write_result('Error : Document not Found!!!\n---------------\n')
                 else :
                     if tree_type_global.get() == 1:
                         for subdir, dirs, files in os.walk(directory_text_field_global.get()):
@@ -264,13 +262,9 @@ def sytax_of_command_line(command):
                                             node = fileLinkedList.add(word)
                                             if stopwordsTrie.get(word) == None:
                                                 words_tree.add(node)
-                    resultText.config(state=tkinter.NORMAL)
-                    resultText.insert(INSERT, 'File' + name_of_file + 'Added\n---------------\n')
-                    resultText.config(state=tkinter.DISABLED)
+                    write_result('File' + name_of_file + 'Added\n---------------\n')
             else:
-                resultText.config(state=tkinter.NORMAL)
-                resultText.insert(INSERT, 'Error Happend')
-                resultText.config(state=tkinter.DISABLED)
+                write_result('Error Happend\n---------------\n')
             return True
         elif current_state == 2:
             first_quote = re.match(r'^"(.*)', command_words[1])
@@ -294,29 +288,78 @@ def sytax_of_command_line(command):
                     file_going_to_delete.removeAll()
                     files_list.remove(file_going_to_delete)
                     del file_going_to_delete
-                    resultText.config(state=tkinter.NORMAL)
-                    resultText.insert(INSERT, 'File ' + name_of_file + ' Deleted\n---------------\n')
-                    resultText.config(state=tkinter.DISABLED)
+                    write_result('File ' + name_of_file + ' Deleted\n---------------\n')
                 if not file_name_found:
                     write_result(resultText.insert(INSERT, 'Error : Document not Found!!!\n---------------\n'))
             else:
-                resultText.config(state=tkinter.NORMAL)
-                resultText.insert(INSERT, 'Error Happend\n---------------\n')
-                resultText.config(state=tkinter.DISABLED)
+                write_result('Error Happend\n---------------\n')
 
             return True
         elif current_state == 3:
             first_quote = re.match(r'^"(.*)', command_words[1])
             second_quote = re.match(r'(.*)"$', command_words[-1])
             if first_quote and second_quote:
-                if not first_quote.group(1) == '\"':
+                if command_words[1] == '\"':
+                    del command_words[1]
+                else:
                     command_words[1] = command_words[1].replace('\"', '')
-                if not second_quote.group(1) == '\"':
+                if command_words[-1] == '\"':
+                    del command_words[-1]
+                else:
                     command_words[-1] = command_words[-1].replace('\"', '')
+                name_of_file = ''
+                for separate_word in command_words[1:]:
+                    name_of_file = name_of_file + separate_word
+                file_name_found = False
+                files_to_delete = [name_of_file_added for name_of_file_added in files_list if
+                                   name_of_file_added.documentName == name_of_file]
+                for file_going_to_delete in files_to_delete:
+                    file_name_found = True
+                    file_going_to_delete.removeAll()
+                    files_list.remove(file_going_to_delete)
+                    del file_going_to_delete
+                    if tree_type_global.get() == 1:
+                        for subdir, dirs, files in os.walk(directory_text_field_global.get()):
+                            for file in files:
+                                if name_of_file in file and file.endswith('.txt'):
+                                    with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
+                                        fileLinkedList = LinkedList(documentName=file[:-4])
+                                        files_list.append(fileLinkedList)
+                                        DATA = myfile.read().replace('\n', ' ')
+                                        for word in re.findall(r"[\w']+", DATA):
+                                            node = fileLinkedList.add(word)
+                                            if stopwordsTST.get(word) == None:
+                                                words_tree.push(node, i)
+                                                i = i + 1
+                    if tree_type_global.get() == 2:
+                        for subdir, dirs, files in os.walk(directory_text_field_global.get()):
+                            for file in files:
+                                if name_of_file in file and file.endswith('.txt'):
+                                    with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
+                                        fileLinkedList = LinkedList(documentName=file[:-4])
+                                        DATA = myfile.read().replace('\n', ' ')
+                                        for word in re.findall(r"[\w']+", DATA):
+                                            node = fileLinkedList.add(word)
+                                            if stopwordsBST.get(word) == None:
+                                                words_tree.add(node)
+                    if tree_type_global.get() == 3:
+                        for subdir, dirs, files in os.walk(directory_text_field_global.get()):
+                            for file in files:
+                                if name_of_file in file and file.endswith('.txt'):
+                                    with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
+                                        fileLinkedList = LinkedList(documentName=file[:-4])
+                                        files_list.append(fileLinkedList)
+                                        DATA = myfile.read().replace('\n', ' ')
+                                        for word in re.findall(r"[\w']+", DATA):
+                                            node = fileLinkedList.add(word)
+                                            if stopwordsTrie.get(word) == None:
+                                                words_tree.add(node)
+                    write_result('File' + name_of_file + 'Updated\n---------------\n')
+                if not file_name_found:
+                    write_result('Error : Document not Found!!!\n---------------\n')
             else:
-                resultText.config(state=tkinter.NORMAL)
-                resultText.insert(INSERT, 'Error Happend\n---------------\n')
-                resultText.config(state=tkinter.DISABLED)
+                write_result('Error Happend\n---------------\n')
+
             return True
         elif current_state == 4:
             if command_words[1] == '-w':
@@ -338,6 +381,8 @@ def sytax_of_command_line(command):
             return True
         elif current_state == 9:
             write_result(words_tree.traverse_words_documents())
+            write_result('Number of all Words : '+str(words_tree.number_of_words) + '\n---------------\n')
+            words_tree.number_of_words = 0
             return True
         elif current_state == 10:
             for file in files_list:
@@ -356,21 +401,14 @@ def sytax_of_command_line(command):
 
         elif current_state == 12:
             first_quote = re.match(r'^"(.*)', command_words[2])
-            print('1')
             second_quote = re.match(r'(.*)"$', command_words[-1])
-            print('2')
             if first_quote and second_quote:
-                print('3')
                 if not first_quote.group(1) == '\"':
                     command_words[2] = command_words[2].replace('\"', '')
-                print('4')
                 if not second_quote.group(1) == '\"':
                     command_words[-1] = command_words[-1].replace('\"', '')
-                print('5')
             else:
-                resultText.config(state=tkinter.NORMAL)
-                resultText.insert(INSERT, 'Error Happend\n---------------\n')
-                resultText.config(state=tkinter.DISABLED)
+                write_result('Error Happend\n---------------\n')
             if command_words[-1] is command_words[2]:
                 if not words_tree.get(command_words[-1]):
                     write_result('\nAny word found !!!\n---------------\n')
@@ -387,20 +425,16 @@ def sytax_of_command_line(command):
                 if not second_quote.group(1) == '\"':
                     command_words[-1] = command_words[-1].replace('\"', '')
             else:
-                resultText.config(state=tkinter.NORMAL)
-                resultText.insert(INSERT, 'Error Happend')
-                resultText.config(state=tkinter.DISABLED)
+                write_result('Error Happend\n---------------\n')
             if command_words[-1] is command_words[2]:
                 if not words_tree.get(command_words[-1]):
-                    write_result('\nAny word found !!!\n')
+                    write_result('Any word found !!!\n---------------\n')
                 else:
                     write_result(words_tree.get(command_words[-1]).refrence.getAll())
             current_state = 20     # <-- This live has to change -->
             return True
         else:
-            resultText.config(state=tkinter.NORMAL)
-            resultText.insert(INSERT, 'Error : Unkown Command\n')
-            resultText.config(state=tkinter.DISABLED)
+            write_result('Error : Unkown Command\n---------------\n')
             return True
     return True
 
@@ -480,132 +514,4 @@ if __name__ == '__main__':
     build_button.pack(side=RIGHT)
 
 
-
-    from TST import *
-    from Trie import *
-    from LinkedList import Node, LinkedList
-
-    stopwordsTST = Trie()
-    with open('StopWords.txt', 'r+') as myfile:
-        fileLinkedList = LinkedList(documentName='stopword')
-        DATA = myfile.read().replace('\n', ' ')
-        for stopword in re.findall(r"[\w']+", DATA):
-            node = fileLinkedList.add(stopword)
-            print(node.data)
-            stopwordsTST.add(node)
-    # s = stopwordsTST.get('about').refrence.getAll()
-    # write_result(s)
-    # write_result(stopwordsTST.traverse())
-
     root.mainloop()
-
-
-
-# top = Tk()
-#
-# Lb1 = Listbox(top)
-# Lb1.insert(1, "Python")
-# Lb1.insert(2, "Perl")
-# Lb1.insert(3, "C")
-# Lb1.insert(4, "PHP")
-# Lb1.insert(5, "JSP")
-# Lb1.insert(6, "Ruby")
-# Lb1.delete(1)
-# Lb1.pack()
-# top.mainloop()
-
-
-
-
-# root = Tk()
-#
-# var = StringVar()
-# label = Message( root, textvariable=var, relief=RAISED )
-#
-# var.set("Hey!? How are you doing?")
-# label.pack()
-# root.mainloop()
-
-
-
-
-
-# def sel():
-#    selection = "You selected the option " + str(var.get())
-#    label.config(text = selection)
-#
-# root = Tk()
-# var = IntVar()
-# R1 = Radiobutton(root, text="Option 1", variable=var, value=1,
-#                   command=sel)
-# R1.pack( anchor = W )
-#
-# R2 = Radiobutton(root, text="Option 2", variable=var, value=2,
-#                   command=sel)
-# R2.pack( anchor = W )
-#
-# R3 = Radiobutton(root, text="Option 3", variable=var, value=3,
-#                   command=sel)
-# R3.pack( anchor = W )
-#
-# label = Label(root)
-# label.pack()
-# root.mainloop()
-
-
-
-# root = Tk()
-#
-# labelframe = LabelFrame(root, text="This is a LabelFrame")
-# labelframe.pack(fill="both", expand="yes")
-#
-# left = Label(labelframe, text="Inside the LabelFrame")
-# left.config(text = 'wow')
-# left.pack()
-import time
-import curses
-import os
-# os.environ['TERM'] = 'xterm'
-# win = curses.initscr()
-# # Turn off line buffering
-# curses.cbreak()
-#
-# # Initialize the terminal
-# win = curses.initscr()
-#
-# # Make getch() non-blocking
-# win.nodelay(True)
-#
-# while True:
-#     key = win.getch()
-#     if key != -1:
-#         print('Pressed key', key)
-#     time.sleep(0.01)
-
-# class StdOutWrapper:
-#     text = ""
-#     def write(self,txt):
-#         self.text += txt
-#         self.text = '\n'.join(self.text.split('\n')[-30:])
-#     def get_text(self,beg,end):
-#         return '\n'.join(self.text.split('\n')[beg:end])
-#
-# if __name__ == "__main__":
-#     print('adsf')
-#     mystdout = StdOutWrapper()
-#     sys.stdout = mystdout
-#     sys.stderr = mystdout
-#     screen = curses.initscr()
-#     curses.noecho()
-#     curses.cbreak()
-#
-#     # do your stuff here
-#     # you can also output mystdout.get_text() in a ncurses widget in runtime
-#
-#     screen.keypad(0)
-#     curses.nocbreak()
-#     curses.echo()
-#     curses.endwin()
-#     sys.stdout = sys.__stdout__
-#     sys.stderr = sys.__stderr__
-#     sys.stdout.write(mystdout.get_text())

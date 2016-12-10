@@ -12,6 +12,7 @@ class NodeTST():
 
 class TST():
     def __init__(self):
+        self.number_of_words = 0
         self.i = 0
         self.root = NodeTST('m')
 
@@ -55,20 +56,20 @@ class TST():
 
         charOfWord = word[charIndex]
 
-        if charOfWord < node.character :
+        if charOfWord.lower() < node.character :
             return self.getWord(node.leftChild,word,charIndex)
 
-        elif charOfWord > node.character :
+        elif charOfWord.lower() > node.character :
             return self.getWord(node.rightChild,word,charIndex)
 
         elif charIndex < len(word)-1:
             return self.getWord(node.middleChild,word,charIndex+1)
 
         else :
-            # if node.refrence.head.superNext == None or node.refrence.head.superNext == node.refrence.head:
-            #     return None
-            return node
-            # return node.refrence.getAll()
+            if node.completeWord:
+                return node
+            else :
+                return None
 
     def traverse(self,node=None,charWord='',sentence = ''):
         if node == None:
@@ -94,7 +95,10 @@ class TST():
         if (node.middleChild != None):
             sentence = self.traverse_words_documents(node.middleChild, charWord + node.character, sentence)
         if (node.completeWord):
-            return sentence + node.refrence.getDocuments()
+            node_documents = node.refrence.getDocuments()
+            if node_documents is not '':
+                self.number_of_words = self.number_of_words + 1
+            return sentence + node_documents
         else:
             return sentence
 
