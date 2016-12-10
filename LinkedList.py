@@ -35,6 +35,7 @@ class LinkedList():
         if self.head.superNext == None:
             self.head.superNext = node
             node.superPrev = self.head
+            node.superNext = self.head
             self.head.superPrev = node
         else:
             self.head.superPrev.superNext = node
@@ -86,7 +87,6 @@ class LinkedList():
             if p.next != None and not p.next.isHead and p.next.next != None and not p.next.next.isHead:
                 result_str = result_str + ' ' + p.next.next.data
             result_str = result_str + ' ... )'
-            # print( '| -> ( ... ' + p.prev.data +' '+ p.data +' '+ p.next.data +' ' + ' ... )')
         return result_str
 
     def getDocuments(self):
@@ -94,21 +94,24 @@ class LinkedList():
         p = self.head
         nameOfLastDocument = ''
         result_str = ''
+        next_line = False
         if p.superNext != self.head and p.superNext != None:
+            next_line = True
             result_str = result_str + '| ' + p.superNext.data + ' --> '
         while p.superNext != self.head and p.superNext != None:
             p = p.superNext
             if nameOfLastDocument != p.documentName:
                 nameOfLastDocument = p.documentName
                 result_str = result_str + p.documentName + ' '
-            # print( '| -> ( ... ' + p.prev.data +' '+ p.data +' '+ p.next.data +' ' + ' ... )')
-        return result_str + '\n'
+        if next_line:
+            result_str = result_str + '\n'
+        return result_str
 
     def removeAll(self):
         current_node = self.head
         while current_node.next != self.head:
             current_node = current_node.next
-            if current_node.superNext:
+            if current_node.superNext != None:
                 self.SuperRemove(current_node)
 
 # <--End of Creating Class LinkedList-->

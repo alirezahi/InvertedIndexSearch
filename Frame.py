@@ -1,80 +1,3 @@
-# from tkinter import *
-#
-# class Application(Frame):
-#     def say_hi(self):
-#         print ("hi there, everyone!")
-#
-#     def createWidgets(self):
-#         self.QUIT = Button(self)
-#         self.QUIT["text"] = "QUIT",
-#         self.QUIT["fg"]   = "red"
-#         self.QUIT["command"] =  self.quit
-#
-#         self.QUIT.pack({"side": "left"})
-#
-#         self.hi_there = Button(self)
-#         self.hi_there["text"] = "Hello",
-#         self.hi_there["command"] = self.say_hi
-#
-#         self.hi_there.pack({"side": "left"})
-#
-#     def __init__(self, master=None):
-#         Frame.__init__(self, master)
-#         self.pack()
-#         self.createWidgets()
-#
-# root = Tk()
-# app = Application(master=root)
-# app.mainloop()
-# root.destroy()
-
-
-from tkinter.filedialog import askopenfilename
-from tkinter.messagebox import showerror
-#
-# class MyFrame(Frame):
-#     def __init__(self):
-#         Frame.__init__(self)
-#         self.master.title("Example")
-#         self.master.rowconfigure(5, weight=1)
-#         self.master.columnconfigure(5, weight=1)
-#         self.grid(sticky=W+E+N+S)
-#
-#         self.button = Button(self, text="Browse", command=self.load_file, width=10)
-#         self.button.grid(row=1, column=0, sticky=W)
-#
-#     def load_file(self):
-#         fname = askopenfilename(filetypes=(("Template files", "*.tplate"),
-#                                            ("HTML files", "*.html;*.htm"),
-#                                            ("All files", "*.*") ))
-#         if fname:
-#             try:
-#                 print("""here it comes: self.settings["template"].set(fname)""")
-#             except:                     # <- naked except is a bad idea
-#                 showerror("Open Source File", "Failed to read file\n'%s'" % fname)
-#             return
-#
-#
-# if __name__ == "__main__":
-#     MyFrame().mainloop()
-
-# import sys
-# def onclick():
-#    pass
-#
-# root = Tk()
-# text = Text(root)
-# text.insert(INSERT, "Hello.....")
-# text.insert(END, "Bye Bye.....")
-# text.pack()
-#
-# text.tag_add("here", "1.0", "1.4")
-# text.tag_add("start", "1.8", "1.13")
-# text.tag_config("here", background="yellow", foreground="blue")
-# text.tag_config("start", background="black", foreground="green")
-# root.mainloop()
-# from Trie import Trie,NodeTrie
-# from LinkedList import Node
 from Stack import Stack
 
 from tkinter import *
@@ -197,7 +120,10 @@ def Stopwords_def():
 words_tree = None
 from LinkedList import LinkedList
 files_list = []
+tree_type_global = None
 def Build(directory_entered,tree_type):
+    global tree_type_global
+    tree_type_global = tree_type
     if os.path.isdir(directory_entered.get()):
         from LinkedList import LinkedList
         if tree_type.get() == 1:
@@ -221,11 +147,12 @@ def Build(directory_entered,tree_type):
         elif tree_type.get() == 2:
             # BST Search
             words_tree = BST()
-            for subdir, dirs, files in os.walk(dir):
+            for subdir, dirs, files in os.walk(directory_entered.get()):
                 for file in files:
                     if file.endswith('.txt'):
                         with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
                             fileLinkedList = LinkedList(documentName=file[:-4])
+                            files_list.append(fileLinkedList)
                             DATA = myfile.read().replace('\n', ' ')
                             for word in re.findall(r"[\w']+", DATA):
                                 node = fileLinkedList.add(word)
@@ -233,9 +160,22 @@ def Build(directory_entered,tree_type):
                                     words_tree.add(node)
             # BST Search
 
-            # BST Search
         elif tree_type.get() == 3:
+            # Trie Search
             words_tree = Trie()
+            for subdir, dirs, files in os.walk(directory_entered.get()):
+                for file in files:
+                    if file.endswith('.txt'):
+                        with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
+                            fileLinkedList = LinkedList(documentName=file[:-4])
+                            files_list.append(fileLinkedList)
+                            DATA = myfile.read().replace('\n', ' ')
+                            for word in re.findall(r"[\w']+", DATA):
+                                node = fileLinkedList.add(word)
+                                if stopwordsTrie.get(word) == None:
+                                    words_tree.add(node)
+            # Trie Search
+
     else :
         tkinter.messagebox.showinfo("Directory", "The Directory Entered doesn't Exist")
 
@@ -271,9 +211,62 @@ def sytax_of_command_line(command):
                     del command_words[-1]
                 else:
                     command_words[-1] = command_words[-1].replace('\"', '')
-                resultText.config(state=tkinter.NORMAL)
-                resultText.insert(INSERT, command_words)
-                resultText.config(state=tkinter.DISABLED)
+                name_of_file = ''
+                for separate_word in command_words[1:]:
+                    name_of_file = name_of_file + separate_word
+                file_exist = False
+                for subdir, dirs, files in os.walk(directory_text_field_global.get()):
+                    for file in files:
+                        if name_of_file in file:
+                            file_exist = True
+                if [name_of_file_added for name_of_file_added in files_list if name_of_file_added.documentName == name_of_file].__len__()>0:
+                    resultText.config(state=tkinter.NORMAL)
+                    resultText.insert(INSERT, 'Error : Document already Exists!!!\n---------------\n')
+                    resultText.config(state=tkinter.DISABLED)
+                elif not file_exist:
+                    resultText.config(state=tkinter.NORMAL)
+                    resultText.insert(INSERT, 'Error : Document not Found!!!\n---------------\n')
+                    resultText.config(state=tkinter.DISABLED)
+                else :
+                    if tree_type_global.get() == 1:
+                        for subdir, dirs, files in os.walk(directory_text_field_global.get()):
+                            for file in files:
+                                if name_of_file in file and file.endswith('.txt'):
+                                    with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
+                                        fileLinkedList = LinkedList(documentName=file[:-4])
+                                        files_list.append(fileLinkedList)
+                                        DATA = myfile.read().replace('\n', ' ')
+                                        for word in re.findall(r"[\w']+", DATA):
+                                            node = fileLinkedList.add(word)
+                                            if stopwordsTST.get(word) == None:
+                                                words_tree.push(node, i)
+                                                i = i + 1
+                    if tree_type_global.get() == 2:
+                        for subdir, dirs, files in os.walk(directory_text_field_global.get()):
+                            for file in files:
+                                if name_of_file in file and file.endswith('.txt'):
+                                    with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
+                                        fileLinkedList = LinkedList(documentName=file[:-4])
+                                        DATA = myfile.read().replace('\n', ' ')
+                                        for word in re.findall(r"[\w']+", DATA):
+                                            node = fileLinkedList.add(word)
+                                            if stopwordsBST.get(word) == None:
+                                                words_tree.add(node)
+                    if tree_type_global.get() == 3:
+                        for subdir, dirs, files in os.walk(directory_text_field_global.get()):
+                            for file in files:
+                                if name_of_file in file and file.endswith('.txt'):
+                                    with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
+                                        fileLinkedList = LinkedList(documentName=file[:-4])
+                                        files_list.append(fileLinkedList)
+                                        DATA = myfile.read().replace('\n', ' ')
+                                        for word in re.findall(r"[\w']+", DATA):
+                                            node = fileLinkedList.add(word)
+                                            if stopwordsTrie.get(word) == None:
+                                                words_tree.add(node)
+                    resultText.config(state=tkinter.NORMAL)
+                    resultText.insert(INSERT, 'File' + name_of_file + 'Added\n---------------\n')
+                    resultText.config(state=tkinter.DISABLED)
             else:
                 resultText.config(state=tkinter.NORMAL)
                 resultText.insert(INSERT, 'Error Happend')
@@ -291,13 +284,26 @@ def sytax_of_command_line(command):
                     del command_words[-1]
                 else :
                     command_words[-1] = command_words[-1].replace('\"', '')
-                resultText.config(state=tkinter.NORMAL)
-                resultText.insert(INSERT, command_words)
-                resultText.config(state=tkinter.DISABLED)
+                name_of_file = ''
+                for separate_word in command_words[1:]:
+                    name_of_file = name_of_file + separate_word
+                file_name_found = False
+                files_to_delete = [name_of_file_added for name_of_file_added in files_list if name_of_file_added.documentName == name_of_file]
+                for file_going_to_delete in files_to_delete:
+                    file_name_found = True
+                    file_going_to_delete.removeAll()
+                    files_list.remove(file_going_to_delete)
+                    del file_going_to_delete
+                    resultText.config(state=tkinter.NORMAL)
+                    resultText.insert(INSERT, 'File ' + name_of_file + ' Deleted\n---------------\n')
+                    resultText.config(state=tkinter.DISABLED)
+                if not file_name_found:
+                    write_result(resultText.insert(INSERT, 'Error : Document not Found!!!\n---------------\n'))
             else:
                 resultText.config(state=tkinter.NORMAL)
-                resultText.insert(INSERT, 'Error Happend')
+                resultText.insert(INSERT, 'Error Happend\n---------------\n')
                 resultText.config(state=tkinter.DISABLED)
+
             return True
         elif current_state == 3:
             first_quote = re.match(r'^"(.*)', command_words[1])
@@ -307,12 +313,9 @@ def sytax_of_command_line(command):
                     command_words[1] = command_words[1].replace('\"', '')
                 if not second_quote.group(1) == '\"':
                     command_words[-1] = command_words[-1].replace('\"', '')
-                resultText.config(state=tkinter.NORMAL)
-                resultText.insert(INSERT, command_words)
-                resultText.config(state=tkinter.DISABLED)
             else:
                 resultText.config(state=tkinter.NORMAL)
-                resultText.insert(INSERT, 'Error Happend')
+                resultText.insert(INSERT, 'Error Happend\n---------------\n')
                 resultText.config(state=tkinter.DISABLED)
             return True
         elif current_state == 4:
@@ -337,10 +340,9 @@ def sytax_of_command_line(command):
             write_result(words_tree.traverse_words_documents())
             return True
         elif current_state == 10:
-            global files_list
             for file in files_list:
                 write_result(file.documentName+' ')
-            write_result('\nNumber of listed Docs = ' + files_list.__len__().__str__()+'\n')
+            write_result('\nNumber of listed Docs = ' + files_list.__len__().__str__()+'\n---------------\n')
             return True
         elif current_state == 11:
             number_of_files = 0
@@ -349,11 +351,51 @@ def sytax_of_command_line(command):
                     if file.endswith('.txt'):
                         write_result(file[:-4] + ' ')
                         number_of_files = number_of_files + 1
-            write_result('\nNumber of all Docs = ' + number_of_files.__str__()+'\n')
+            write_result('\nNumber of all Docs = ' + number_of_files.__str__()+'\n---------------\n')
             return True
+
         elif current_state == 12:
+            first_quote = re.match(r'^"(.*)', command_words[2])
+            print('1')
+            second_quote = re.match(r'(.*)"$', command_words[-1])
+            print('2')
+            if first_quote and second_quote:
+                print('3')
+                if not first_quote.group(1) == '\"':
+                    command_words[2] = command_words[2].replace('\"', '')
+                print('4')
+                if not second_quote.group(1) == '\"':
+                    command_words[-1] = command_words[-1].replace('\"', '')
+                print('5')
+            else:
+                resultText.config(state=tkinter.NORMAL)
+                resultText.insert(INSERT, 'Error Happend\n---------------\n')
+                resultText.config(state=tkinter.DISABLED)
+            if command_words[-1] is command_words[2]:
+                if not words_tree.get(command_words[-1]):
+                    write_result('\nAny word found !!!\n---------------\n')
+                else:
+                    write_result(words_tree.get(command_words[-1]).refrence.getAll())
+            current_state = 20     # <-- This live has to change -->
             return True
         elif current_state == 13:
+            first_quote = re.match(r'^"(.*)', command_words[2])
+            second_quote = re.match(r'(.*)"$', command_words[-1])
+            if first_quote and second_quote:
+                if not first_quote.group(1) == '\"':
+                    command_words[2] = command_words[2].replace('\"', '')
+                if not second_quote.group(1) == '\"':
+                    command_words[-1] = command_words[-1].replace('\"', '')
+            else:
+                resultText.config(state=tkinter.NORMAL)
+                resultText.insert(INSERT, 'Error Happend')
+                resultText.config(state=tkinter.DISABLED)
+            if command_words[-1] is command_words[2]:
+                if not words_tree.get(command_words[-1]):
+                    write_result('\nAny word found !!!\n')
+                else:
+                    write_result(words_tree.get(command_words[-1]).refrence.getAll())
+            current_state = 20     # <-- This live has to change -->
             return True
         else:
             resultText.config(state=tkinter.NORMAL)
