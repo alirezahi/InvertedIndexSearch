@@ -2,6 +2,7 @@ from Stack import Stack
 
 from tkinter import *
 import tkinter.filedialog
+import tkinter.messagebox
 
 from TST import TST
 from BST import BST
@@ -9,7 +10,7 @@ from Trie import Trie
 
 
 main_command_line = Entry
-
+build_button_global = None
 main_stack = Stack()
 secondary_stack = Stack()
 import os
@@ -35,12 +36,12 @@ def Commands_Tree():
     commands_tree.add(Node('add'))
     commands_tree.add(Node('del'))
     commands_tree.add(Node('update'))
+    commands_tree.add(Node('height'))
 
 def tab(arg):
     command_line_content = commands_tree.auto_complete(main_command_line.get())
     main_command_line.delete(0, END)
     main_command_line.insert(INSERT,command_line_content)
-    print("tab pressed")
     return 'break'
 
 
@@ -135,7 +136,7 @@ def Stopwords_def():
             node = Node(data=stopword)
             stopwordsTrie.add(node)
     # <-- End Listing Stopwords Trie -->
-
+import time
 words_tree = None
 from LinkedList import LinkedList
 files_list = []
@@ -144,6 +145,7 @@ def Build(directory_entered,tree_type):
     global tree_type_global
     tree_type_global = tree_type
     if os.path.isdir(directory_entered.get()):
+        start_time = time.time()
         from LinkedList import LinkedList
         if tree_type.get() == 1:
             # TST Tree
@@ -194,7 +196,9 @@ def Build(directory_entered,tree_type):
                                 if stopwordsTrie.get(word) == None:
                                     words_tree.add(node)
             # Trie Search
-
+        write_result('Build is Complete\n')
+        end_time = time.time()
+        write_result('Time of Process : ' + str(end_time-start_time)+' Seconds\n---------------\n')
     else :
         tkinter.messagebox.showinfo("Directory", "The Directory Entered doesn't Exist")
 
@@ -216,6 +220,9 @@ def sytax_of_command_line(command):
                 current_state = 4
             elif command_words[0].lower() == 'search':
                 current_state = 5
+            elif command_words[0].lower() == 'height':
+                write_result('Height of Tree is : '+str(words_tree.height())+'\n---------------\n')
+                return True
             else :
                 current_state = 14
         elif current_state == 1 :
@@ -435,6 +442,7 @@ def sytax_of_command_line(command):
                 print(word)
                 if stopwordsTST.get(word) == None and words_tree.get(word) is not None:
                     write_result(words_tree.get(word).refrence.getAll())
+            write_result('\n---------------\n')
             return True
         elif current_state == 13:
             first_quote = re.match(r'^"(.*)', command_words[2])
@@ -450,7 +458,7 @@ def sytax_of_command_line(command):
                 if not words_tree.get(command_words[-1]):
                     write_result('Any word found !!!\n---------------\n')
                 else:
-                    write_result(words_tree.get(command_words[-1]).refrence.getAll())
+                    write_result(words_tree.get(command_words[-1]).refrence.getAll()+'\n---------------\n')
             current_state = 20     # <-- This live has to change -->
             return True
         else:
@@ -524,6 +532,7 @@ if __name__ == '__main__':
 
     build_button = Button(buttons_frame, text="Build", command=lambda: Build(directory_text_field,var))
     build_button.pack(side=LEFT)
+    build_button_global = build_button
 
     build_button = Button(buttons_frame, text="Reset", command=lambda: Reset())
     build_button.pack(side=LEFT)

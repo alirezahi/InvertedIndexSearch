@@ -84,7 +84,7 @@ class Trie():
     def auto_complete(self,data):
         completed_word = data
         middle_of_road = self.getNotCompleteWord(data)
-        while len(middle_of_road.child)<2:
+        while middle_of_road is not None and len(middle_of_road.child)<2:
             if len(middle_of_road.child)==1:
                 [(a,middle_of_road)] = middle_of_road.child.items()
                 completed_word = completed_word + middle_of_road.character
