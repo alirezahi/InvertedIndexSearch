@@ -37,6 +37,7 @@ def Commands_Tree():
     commands_tree.add(Node('del'))
     commands_tree.add(Node('update'))
     commands_tree.add(Node('height'))
+    commands_tree.add(Node('hnavid'))
 
 def tab(arg):
     command_line_content = commands_tree.auto_complete(main_command_line.get())
@@ -345,7 +346,7 @@ def sytax_of_command_line(command):
                     if tree_type_global.get() == 1:
                         for subdir, dirs, files in os.walk(directory_text_field_global.get()):
                             for file in files:
-                                if name_of_file in file and file.endswith('.txt'):
+                                if name_of_file+'.txt' in file and file.endswith('.txt'):
                                     with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
                                         fileLinkedList = LinkedList(documentName=file[:-4])
                                         files_list.append(fileLinkedList)
@@ -465,9 +466,17 @@ def sytax_of_command_line(command):
             write_result('Error : Unkown Command\n---------------\n')
             return True
     return True
-
+from AVL import AVL
 if __name__ == '__main__':
-
+    alireza = AVL()
+    alireza.add(Node('a'))
+    alireza.add(Node('b'))
+    alireza.add(Node('c'))
+    alireza.add(Node('g'))
+    alireza.add(Node('f'))
+    alireza.add(Node('e'))
+    print(alireza.height())
+    print(alireza.traverse())
     search_var = IntVar
 
     Stopwords_def()

@@ -110,8 +110,4 @@ class TST():
         leftH = self.height(node=node.leftChild, isRoot=False)
         rightH = self.height(node=node.rightChild, isRoot=False)
         middleH = self.height(node=node.middleChild, isRoot=False)
-        if isRoot:
-            print(max(leftH,rightH,middleH)+2)
-            return max(leftH,rightH,middleH)+2
-        else:
-            return max(leftH, rightH, middleH) + 1
+        return max(leftH, rightH, middleH) + 1

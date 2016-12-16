@@ -86,7 +86,4 @@ class BST():
             return -1
         leftH = self.height(node = node.leftChild,isRoot=False)
         rightH = self.height(node = node.rightChild,isRoot=False)
-        if isRoot:
-            return max(leftH,rightH)+2
-        else:
-            return max(leftH,rightH)+1
+        return max(leftH,rightH)+1
