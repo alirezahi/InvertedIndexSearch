@@ -7,7 +7,7 @@ class NodeBST():
         self.leftChild = None
         self.rightChild = None
         self.isUsableWord = isUsableWord
-        self.refrence = LinkedList()
+        self.refrence = LinkedList(node_ref=self)
 
 class BST():
     def __init__(self):
@@ -20,35 +20,88 @@ class BST():
         wordIsAdded = False
         while not wordIsAdded:
             if node_of_word.data.lower() > current_node.word:
-                if current_node.leftChild == None:
-                    current_node.leftChild = NodeBST(node_of_word.data.lower())
-                    current_node.leftChild.refrence.SuperAdd(node_of_word)
-                    wordIsAdded = True
-                else :
-                    current_node = current_node.leftChild
-            elif node_of_word.data.lower() < current_node.word:
                 if current_node.rightChild == None:
                     current_node.rightChild = NodeBST(node_of_word.data.lower())
-                    current_node.rightChild.refrence.SuperAdd(node_of_word)
+                    current_node.rightChild.refrence.SuperAdd(node_of_word,root_tree=self,node_ref=current_node.rightChild)
+                    current_node.rightChild.father = current_node
+                    wordIsAdded = True
+                else :
+                    current_node = current_node.rightChild
+            elif node_of_word.data.lower() < current_node.word:
+                if current_node.leftChild == None:
+                    current_node.leftChild = NodeBST(node_of_word.data.lower())
+                    current_node.leftChild.refrence.SuperAdd(node_of_word,root_tree=self,node_ref=current_node.leftChild)
+                    current_node.leftChild.father = current_node
                     wordIsAdded = True
                 else:
-                    current_node = current_node.rightChild
+                    current_node = current_node.leftChild
             else :
-                current_node.refrence.SuperAdd(node_of_word)
+                current_node.refrence.SuperAdd(node_of_word,root_tree=self,node_ref=current_node)
                 current_node.isUsableWord = True
                 wordIsAdded = True
 
     def get(self, word):
         current_node = self.root
-        while current_node!=None:
+        while current_node:
             if word.lower() == current_node.word and current_node.isUsableWord:
                 return current_node
             if word.lower() > current_node.word:
-                current_node = current_node.leftChild
-            else :
                 current_node = current_node.rightChild
+            else :
+                current_node = current_node.leftChild
         return None
 
+    def find_biggest_left_child(self,node):
+        while node.rightChild:
+            node = node.rightChild
+        return node
+
+    def find_lowest_right_child(self, node):
+        while node.leftChild:
+            node = node.leftChild
+        return node
+
+    def remove(self,node_to_delete):
+        print('sdfsdfdfs')
+        if node_to_delete.leftChild:
+            if node_to_delete.rightChild:
+                tmp_node = self.find_lowest_right_child(node_to_delete.rightChild)
+                self.remove(tmp_node)
+                tmp_node.father = node_to_delete.father
+                tmp_node.leftChild = node_to_delete.leftChild
+                tmp_node.rightChild = node_to_delete.rightChild
+                if node_to_delete.father.leftChild == node_to_delete:
+                    node_to_delete.father.leftChild = tmp_node
+                else:
+                    node_to_delete.father.rightChild = tmp_node
+            else:
+                if node_to_delete == self.root:
+                    self.root = node_to_delete.leftChild
+                    node_to_delete.father = None
+                else:
+                    node_to_delete.leftChild.father = node_to_delete.father
+                    if node_to_delete.father.leftChild == node_to_delete:
+                        node_to_delete.father.leftChild = node_to_delete.leftChild
+                    else:
+                        node_to_delete.father.rightChild = node_to_delete.leftChild
+        else :
+            print('sdfdsf')
+            if node_to_delete.rightChild:
+                if node_to_delete == self.root:
+                    self.root = node_to_delete.rightChild
+                    node_to_delete.father = None
+                else:
+                    print('dsfsdfsdf')
+                    node_to_delete.rightChild.father = node_to_delete.father
+                    if node_to_delete.father.leftChild == node_to_delete:
+                        node_to_delete.father.leftChild = node_to_delete.rightChild
+                    else:
+                        node_to_delete.father.rightChild = node_to_delete.rightChild
+            else:
+                if node_to_delete.father.leftChild == node_to_delete:
+                    node_to_delete.father.leftChild = None
+                else:
+                    node_to_delete.father.rightChild = None
 
     def traverse(self,node = None):
         if node == None:
@@ -86,4 +139,8 @@ class BST():
             return -1
         leftH = self.height(node = node.leftChild,isRoot=False)
         rightH = self.height(node = node.rightChild,isRoot=False)
+        if node.leftChild :
+            print(node.leftChild.word + ' leftChild')
+        if node.rightChild:
+            print(node.rightChild.word + ' rightChild')
         return max(leftH,rightH)+1

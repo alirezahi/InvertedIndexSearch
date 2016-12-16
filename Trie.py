@@ -24,7 +24,7 @@ class Trie():
             if letter.lower() not in current_node.child:
                 current_node.addChild(letter.lower())
             current_node = current_node.child[letter.lower()]
-        current_node.refrence.SuperAdd(node_of_word)
+        current_node.refrence.SuperAdd(node_of_word,root_tree=self,node_ref=current_node)
         current_node.completeWord = True
 
     def get(self,word):

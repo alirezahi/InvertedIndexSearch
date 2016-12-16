@@ -12,12 +12,15 @@ class Node():
 
 class LinkedList():
 
-    def __init__( self ,documentName = None) :
+    def __init__( self ,documentName = None,node_ref=None) :
         self.head = Node(documentName)
         self.head.isHead = True
         self.head.prev = None
         self.head.next = None
         self.documentName = documentName
+        self.root_tree = None
+        self.main_node = None
+        self.node_ref = node_ref
 
     def add( self, data ) :
         node = Node(data , documentName=self.documentName)
@@ -31,17 +34,23 @@ class LinkedList():
             self.head.prev = node
             node.next = self.head
         return node
-    def SuperAdd(self,node):
+    def SuperAdd(self,node,root_tree,node_ref):
         if self.head.superNext == None:
+            node.main_head = self.head
             self.head.superNext = node
             node.superPrev = self.head
             node.superNext = self.head
             self.head.superPrev = node
+            node.root_tree = root_tree
+            node.node_ref = node_ref
         else:
+            node.main_head = self.head
             self.head.superPrev.superNext = node
             node.superPrev = self.head.superPrev
             self.head.superPrev = node
             node.superNext = self.head
+            node.root_tree = root_tree
+            node.node_ref = node_ref
         return node
 
     def search(self, k):
@@ -64,6 +73,8 @@ class LinkedList():
             inputNode.superNext.superPrev = inputNode.superPrev
             inputNode.superNext == None
             inputNode.superPrev == None
+            if inputNode.main_head.superNext == None or inputNode.main_head.superNext == inputNode.main_head:
+                inputNode.root_tree.remove(inputNode.node_ref)
 
     def getAll(self):
         i=0
@@ -109,7 +120,8 @@ class LinkedList():
 
     def removeAll(self):
         current_node = self.head
-        while current_node.next != self.head:
+        while current_node.next != self.head and current_node.next != None:
+            print(current_node.data + ' dsfsdf')
             current_node = current_node.next
             if current_node.superNext != None:
                 self.SuperRemove(current_node)

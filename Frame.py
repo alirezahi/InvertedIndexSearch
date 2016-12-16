@@ -37,7 +37,6 @@ def Commands_Tree():
     commands_tree.add(Node('del'))
     commands_tree.add(Node('update'))
     commands_tree.add(Node('height'))
-    commands_tree.add(Node('hnavid'))
 
 def tab(arg):
     command_line_content = commands_tree.auto_complete(main_command_line.get())
@@ -168,6 +167,7 @@ def Build(directory_entered,tree_type):
             # TST Tree
         elif tree_type.get() == 2:
             # BST Search
+            global words_tree
             words_tree = BST()
             for subdir, dirs, files in os.walk(directory_entered.get()):
                 for file in files:
@@ -184,6 +184,7 @@ def Build(directory_entered,tree_type):
 
         elif tree_type.get() == 3:
             # Trie Search
+            global words_tree
             words_tree = Trie()
             for subdir, dirs, files in os.walk(directory_entered.get()):
                 for file in files:
@@ -270,6 +271,7 @@ def sytax_of_command_line(command):
                                 if name_of_file in file and file.endswith('.txt'):
                                     with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
                                         fileLinkedList = LinkedList(documentName=file[:-4])
+                                        files_list.append(fileLinkedList)
                                         DATA = myfile.read().replace('\n', ' ')
                                         for word in re.findall(r"[\w']+", DATA):
                                             node = fileLinkedList.add(word)
@@ -315,7 +317,7 @@ def sytax_of_command_line(command):
                     del file_going_to_delete
                     write_result('File ' + name_of_file + ' Deleted\n---------------\n')
                 if not file_name_found:
-                    write_result(resultText.insert(INSERT, 'Error : Document not Found!!!\n---------------\n'))
+                    write_result('Error : Document not Found!!!\n---------------\n')
             else:
                 write_result('Error Happend\n---------------\n')
 
@@ -468,15 +470,19 @@ def sytax_of_command_line(command):
     return True
 from AVL import AVL
 if __name__ == '__main__':
-    alireza = AVL()
-    alireza.add(Node('a'))
-    alireza.add(Node('b'))
-    alireza.add(Node('c'))
-    alireza.add(Node('g'))
-    alireza.add(Node('f'))
-    alireza.add(Node('e'))
-    print(alireza.height())
-    print(alireza.traverse())
+    alireza = BST()
+    alireza.add(Node('p'))
+    alireza.add(Node('n'))
+    alireza.add(Node('y'))
+    alireza.add(Node('r'))
+    alireza.add(Node('q'))
+    alireza.add(Node('w'))
+    alireza.add(Node('t'))
+    alireza.add(Node('u'))
+    alireza.add(Node('x'))
+    alireza.add(Node('z'))
+    alireza.remove(alireza.get('r'))
+    alireza.traverse()
     search_var = IntVar
 
     Stopwords_def()

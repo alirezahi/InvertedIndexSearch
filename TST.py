@@ -36,7 +36,7 @@ class TST():
 
         else:
             node.value = value
-            node.refrence.SuperAdd(nodeOfWord)
+            node.refrence.SuperAdd(nodeOfWord,root_tree=self,node_ref=node)
             node.completeWord = True
 
         return node

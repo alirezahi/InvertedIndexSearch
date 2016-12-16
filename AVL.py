@@ -103,9 +103,9 @@ class AVL():
             if word.lower() == current_node.word:
                 return current_node
             if word.lower() > current_node.word:
-                current_node = current_node.leftChild
-            else :
                 current_node = current_node.rightChild
+            else :
+                current_node = current_node.leftChild
         return None
 
 
