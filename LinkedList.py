@@ -73,7 +73,8 @@ class LinkedList():
             inputNode.superNext.superPrev = inputNode.superPrev
             inputNode.superNext == None
             inputNode.superPrev == None
-            if inputNode.main_head.superNext == None or inputNode.main_head.superNext == inputNode.main_head:
+            from BST import BST
+            if (inputNode.main_head.superNext == None or inputNode.main_head.superNext == inputNode.main_head):
                 inputNode.root_tree.remove(inputNode.node_ref)
 
     def getAll(self):
@@ -121,7 +122,6 @@ class LinkedList():
     def removeAll(self):
         current_node = self.head
         while current_node.next != self.head and current_node.next != None:
-            print(current_node.data + ' dsfsdf')
             current_node = current_node.next
             if current_node.superNext != None:
                 self.SuperRemove(current_node)

@@ -62,7 +62,6 @@ class BST():
         return node
 
     def remove(self,node_to_delete):
-        print('sdfsdfdfs')
         if node_to_delete.leftChild:
             if node_to_delete.rightChild:
                 tmp_node = self.find_lowest_right_child(node_to_delete.rightChild)
@@ -85,13 +84,11 @@ class BST():
                     else:
                         node_to_delete.father.rightChild = node_to_delete.leftChild
         else :
-            print('sdfdsf')
             if node_to_delete.rightChild:
                 if node_to_delete == self.root:
                     self.root = node_to_delete.rightChild
                     node_to_delete.father = None
                 else:
-                    print('dsfsdfsdf')
                     node_to_delete.rightChild.father = node_to_delete.father
                     if node_to_delete.father.leftChild == node_to_delete:
                         node_to_delete.father.leftChild = node_to_delete.rightChild
@@ -126,11 +123,6 @@ class BST():
             if node_documents is not '':
                 self.number_of_words = self.number_of_words+1
             return sentence + node_documents
-    # def get_num_words(self):
-    #     global number_of_words
-    #     num = number_of_words
-    #     number_of_words=0
-    #     return num
 
     def height(self,node = None,isRoot = True):
         if isRoot:
@@ -139,8 +131,4 @@ class BST():
             return -1
         leftH = self.height(node = node.leftChild,isRoot=False)
         rightH = self.height(node = node.rightChild,isRoot=False)
-        if node.leftChild :
-            print(node.leftChild.word + ' leftChild')
-        if node.rightChild:
-            print(node.rightChild.word + ' rightChild')
         return max(leftH,rightH)+1

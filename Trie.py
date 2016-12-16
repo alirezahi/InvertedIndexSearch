@@ -8,9 +8,11 @@ class NodeTrie():
         self.child = dict()
         self.refrence = LinkedList()
         self.completeWord = False
+        self.father = None
 
-    def addChild(self, character):
+    def addChild(self, character,node_of_father):
         self.child[character] = NodeTrie(character)
+        self.child[character].father = node_of_father
 
 class Trie():
     def __init__(self):
@@ -22,10 +24,16 @@ class Trie():
         current_node = self.root
         for letter in node_of_word.data :
             if letter.lower() not in current_node.child:
-                current_node.addChild(letter.lower())
+                current_node.addChild(letter.lower(),node_of_father=current_node)
             current_node = current_node.child[letter.lower()]
         current_node.refrence.SuperAdd(node_of_word,root_tree=self,node_ref=current_node)
         current_node.completeWord = True
+
+    def remove(self,node_to_delete):
+        if len(node_to_delete.child) == 0:
+            node_to_delete.father.child.pop(node_to_delete.character,None)
+        if node_to_delete.father and not node_to_delete.father.completeWord:
+            self.remove(node_to_delete.father)
 
     def get(self,word):
         current_node = self.root

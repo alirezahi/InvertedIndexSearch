@@ -64,7 +64,10 @@ def enter(arg):
     return 'break'
 
 def Reset():
+    global words_tree
     words_tree = None
+    global files_list
+    files_list = []
     resultText.config(state=tkinter.NORMAL)
     resultText.delete('1.0',END)
     resultText.config(state=tkinter.DISABLED)
@@ -167,7 +170,6 @@ def Build(directory_entered,tree_type):
             # TST Tree
         elif tree_type.get() == 2:
             # BST Search
-            global words_tree
             words_tree = BST()
             for subdir, dirs, files in os.walk(directory_entered.get()):
                 for file in files:
@@ -184,7 +186,6 @@ def Build(directory_entered,tree_type):
 
         elif tree_type.get() == 3:
             # Trie Search
-            global words_tree
             words_tree = Trie()
             for subdir, dirs, files in os.walk(directory_entered.get()):
                 for file in files:
@@ -289,7 +290,7 @@ def sytax_of_command_line(command):
                                             node = fileLinkedList.add(word)
                                             if stopwordsTrie.get(word) == None:
                                                 words_tree.add(node)
-                    write_result('File' + name_of_file + 'Added\n---------------\n')
+                    write_result('File ' + name_of_file + ' Added\n---------------\n')
             else:
                 write_result('Error Happend\n---------------\n')
             return True
@@ -442,7 +443,6 @@ def sytax_of_command_line(command):
                 else:
                     write_result(words_tree.get(command_words[-1]).refrence.getAll())
             for word in command_words[2:]:
-                print(word)
                 if stopwordsTST.get(word) == None and words_tree.get(word) is not None:
                     write_result(words_tree.get(word).refrence.getAll())
             write_result('\n---------------\n')
@@ -468,21 +468,14 @@ def sytax_of_command_line(command):
             write_result('Error : Unkown Command\n---------------\n')
             return True
     return True
-from AVL import AVL
+
 if __name__ == '__main__':
-    alireza = BST()
-    alireza.add(Node('p'))
-    alireza.add(Node('n'))
-    alireza.add(Node('y'))
-    alireza.add(Node('r'))
-    alireza.add(Node('q'))
-    alireza.add(Node('w'))
-    alireza.add(Node('t'))
-    alireza.add(Node('u'))
-    alireza.add(Node('x'))
-    alireza.add(Node('z'))
-    alireza.remove(alireza.get('r'))
-    alireza.traverse()
+    alireza = TST()
+    alireza.push(Node('mahin'),100)
+    alireza.push(Node('mohammad'),10)
+    alireza.push(Node('mohsen'),10)
+    alireza.remove(alireza.get('mohsen'))
+    print(alireza.traverse())
     search_var = IntVar
 
     Stopwords_def()

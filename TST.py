@@ -14,25 +14,26 @@ class TST():
     def __init__(self):
         self.number_of_words = 0
         self.i = 0
-        self.root = NodeTST('m')
+        self.root = None
 
     def push(self,nodeOfWord,value):
-        self.root = self.pushWord(self.root,nodeOfWord,value,0)
+        self.root = self.pushWord(self.root,nodeOfWord,value,0,self.root)
 
-    def pushWord(self, node, nodeOfWord, value, charIndex):
+    def pushWord(self, node, nodeOfWord, value, charIndex,father):
         charOfWord = nodeOfWord.data[charIndex].lower()
 
         if node == None:
             node = NodeTST(charOfWord)
+            node.father = father
 
         if charOfWord < node.character:
-            node.leftChild = self.pushWord(node.leftChild,nodeOfWord,value,charIndex)
+            node.leftChild = self.pushWord(node.leftChild,nodeOfWord,value,charIndex,node)
 
         elif charOfWord > node.character:
-            node.rightChild = self.pushWord(node.rightChild, nodeOfWord, value, charIndex)
+            node.rightChild = self.pushWord(node.rightChild, nodeOfWord, value, charIndex,node)
 
         elif charIndex < len(nodeOfWord.data)-1:
-            node.middleChild = self.pushWord(node.middleChild, nodeOfWord, value, charIndex+1)
+            node.middleChild = self.pushWord(node.middleChild, nodeOfWord, value, charIndex+1,node)
 
         else:
             node.value = value
@@ -70,6 +71,19 @@ class TST():
                 return node
             else :
                 return None
+
+    def remove(self,node_to_delete,isRoot = True):
+        if not node_to_delete.leftChild and not node_to_delete.rightChild and not node_to_delete.middleChild and ((not isRoot and not node_to_delete.completeWord) or isRoot):
+            if node_to_delete.father:
+                if node_to_delete.father.leftChild == node_to_delete:
+                    node_to_delete.father.leftChild = None
+                if node_to_delete.father.rightChild == node_to_delete:
+                    node_to_delete.father.rightChild = None
+                if node_to_delete.father.middleChild == node_to_delete:
+                    node_to_delete.father.middleChild = None
+                self.remove(node_to_delete.father,isRoot=False)
+            else :
+                node_to_delete = None
 
     def traverse(self,node=None,charWord='',sentence = ''):
         if node == None:
