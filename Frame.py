@@ -148,6 +148,7 @@ def Build(directory_entered,tree_type):
     global tree_type_global
     tree_type_global = tree_type
     if os.path.isdir(directory_entered.get()):
+        files_list.clear()
         start_time = time.time()
         from LinkedList import LinkedList
         if tree_type.get() == 1:
@@ -204,7 +205,8 @@ def Build(directory_entered,tree_type):
         write_result('Time of Process : ' + str(end_time-start_time)+' Seconds\n---------------\n')
     else :
         tkinter.messagebox.showinfo("Directory", "The Directory Entered doesn't Exist")
-
+def Help():
+    tkinter.messagebox.showinfo("Help", "List:\n\tlist -l : list of listed docs\n\tlist -f : list of all docs\n\t list -w :list of all words\nSearch:\n\tsearch -w : search word\n\t search -s : search statement\n Add:\n\t add : add file\nDelete:\n\tdel : delete file\nUpdate:\n\tupdate: update file\nHeight:\n\theight : height of search structure\n\nAlarm:Changing tree needs \"Reset\" and \"Build\"")
 def sytax_of_command_line(command):
     # <-- It checks the sytax of input command by automata -->
     command_words = command.split()
@@ -227,7 +229,8 @@ def sytax_of_command_line(command):
                 write_result('Height of Tree is : '+str(words_tree.height())+'\n---------------\n')
                 return True
             else :
-                current_state = 14
+                write_result('Error : Unkown Command / list , add , del , update , search , height\n---------------\n')
+                current_state = 100
         elif current_state == 1 :
             first_quote = re.match(r'^"(.*)', command_words[1])
             second_quote = re.match(r'(.*)"$', command_words[-1])
@@ -292,7 +295,7 @@ def sytax_of_command_line(command):
                                                 words_tree.add(node)
                     write_result('File ' + name_of_file + ' Added\n---------------\n')
             else:
-                write_result('Error Happend\n---------------\n')
+                write_result('Error : Unkown File address\n---------------\n')
             return True
         elif current_state == 2:
             first_quote = re.match(r'^"(.*)', command_words[1])
@@ -320,7 +323,7 @@ def sytax_of_command_line(command):
                 if not file_name_found:
                     write_result('Error : Document not Found!!!\n---------------\n')
             else:
-                write_result('Error Happend\n---------------\n')
+                write_result('Error : Unkown File address\n---------------\n')
 
             return True
         elif current_state == 3:
@@ -386,7 +389,7 @@ def sytax_of_command_line(command):
                 if not file_name_found:
                     write_result('Error : Document not Found!!!\n---------------\n')
             else:
-                write_result('Error Happend\n---------------\n')
+                write_result('Error : Unkown File address\n---------------\n')
 
             return True
         elif current_state == 4:
@@ -396,11 +399,16 @@ def sytax_of_command_line(command):
                 current_state = 10
             elif command_words[1] == '-f':
                 current_state = 11
+            else:
+                write_result('Error : Unkown Command : list -w  , list -f , list -l\n---------------\n')
+                current_state =100
         elif current_state == 5:
             if command_words[1] == '-s':
                 current_state = 12
             elif command_words[1] == '-w':
                 current_state = 13
+            else:
+                write_result('Error : Unkown Command : search -w  , search -s\n---------------\n')
         elif current_state == 6:
             return True
         elif current_state == 7:
@@ -470,12 +478,6 @@ def sytax_of_command_line(command):
     return True
 
 if __name__ == '__main__':
-    alireza = TST()
-    alireza.push(Node('mahin'),100)
-    alireza.push(Node('mohammad'),10)
-    alireza.push(Node('mohsen'),10)
-    alireza.remove(alireza.get('mohsen'))
-    print(alireza.traverse())
     search_var = IntVar
 
     Stopwords_def()
@@ -548,7 +550,7 @@ if __name__ == '__main__':
     build_button = Button(buttons_frame, text="Exit", command=lambda: root.destroy())
     build_button.pack(side=RIGHT)
 
-    build_button = Button(buttons_frame, text="Help", command=lambda: askDirectory(directory_text_field))
+    build_button = Button(buttons_frame, text="Help", command=lambda: Help())
     build_button.pack(side=RIGHT)
 
 
