@@ -29,11 +29,13 @@ class Trie():
         current_node.refrence.SuperAdd(node_of_word,root_tree=self,node_ref=current_node)
         current_node.completeWord = True
 
-    def remove(self,node_to_delete):
-        if len(node_to_delete.child) == 0:
+    def remove(self,node_to_delete,start_node = True):
+        if len(node_to_delete.child) == 0 and not node_to_delete == self.root:
             node_to_delete.father.child.pop(node_to_delete.character,None)
+        elif start_node :
+            node_to_delete.completeWord = False
         if node_to_delete.father and not node_to_delete.father.completeWord:
-            self.remove(node_to_delete.father)
+            self.remove(node_to_delete.father,start_node=False)
 
     def get(self,word):
         current_node = self.root

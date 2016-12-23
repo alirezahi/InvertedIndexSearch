@@ -324,7 +324,6 @@ def sytax_of_command_line(command):
                     write_result('Error : Document not Found!!!\n---------------\n')
             else:
                 write_result('Error : Unkown File address\n---------------\n')
-
             return True
         elif current_state == 3:
             first_quote = re.match(r'^"(.*)', command_words[1])
@@ -409,6 +408,7 @@ def sytax_of_command_line(command):
                 current_state = 13
             else:
                 write_result('Error : Unkown Command : search -w  , search -s\n---------------\n')
+                current_state = 100
         elif current_state == 6:
             return True
         elif current_state == 7:
@@ -419,6 +419,7 @@ def sytax_of_command_line(command):
             write_result(words_tree.traverse_words_documents())
             write_result('Number of all Words : '+str(words_tree.number_of_words) + '\n---------------\n')
             words_tree.number_of_words = 0
+            print(words_tree.traverse())
             return True
         elif current_state == 10:
             for file in files_list:
@@ -478,6 +479,21 @@ def sytax_of_command_line(command):
     return True
 
 if __name__ == '__main__':
+    from AVL import AVL
+    al = AVL()
+    al.add(Node('a'))
+    al.add(Node('b'))
+    al.add(Node('c'))
+    al.add(Node('g'))
+    al.add(Node('f'))
+    al.add(Node('e'))
+    al.add(Node('i'))
+    al.add(Node('d'))
+    al.add(Node('h'))
+    al.add(Node('j'))
+    al.add(Node('k'))
+    al.traverse()
+
     search_var = IntVar
 
     Stopwords_def()

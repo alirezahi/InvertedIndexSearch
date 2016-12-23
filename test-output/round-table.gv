@@ -1,0 +1,9 @@
+// The Round Table
+digraph {
+	A [label=Navid]
+	B [label=Khar]
+	L [label=Ast]
+		A -> B
+		A -> L
+		B -> L [constraint=false]
+}

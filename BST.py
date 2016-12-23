@@ -8,6 +8,7 @@ class NodeBST():
         self.rightChild = None
         self.isUsableWord = isUsableWord
         self.refrence = LinkedList(node_ref=self)
+        self.balance_factor = 0
 
 class BST():
     def __init__(self):
@@ -66,39 +67,58 @@ class BST():
             if node_to_delete.rightChild:
                 tmp_node = self.find_lowest_right_child(node_to_delete.rightChild)
                 self.remove(tmp_node)
+                if node_to_delete.rightChild:
+                    node_to_delete.rightChild.father = tmp_node
+                node_to_delete.leftChild.father = tmp_node
                 tmp_node.father = node_to_delete.father
                 tmp_node.leftChild = node_to_delete.leftChild
                 tmp_node.rightChild = node_to_delete.rightChild
-                if node_to_delete.father.leftChild == node_to_delete:
-                    node_to_delete.father.leftChild = tmp_node
+                if node_to_delete == self.root :
+                    self.root = tmp_node
+                    # node_to_delete.father = None
                 else:
-                    node_to_delete.father.rightChild = tmp_node
+                    if node_to_delete.father.leftChild == node_to_delete:
+                        node_to_delete.father.leftChild = tmp_node
+                        # node_to_delete.father = None
+                    else:
+                        node_to_delete.father.rightChild = tmp_node
+                        # node_to_delete.father = None
             else:
                 if node_to_delete == self.root:
                     self.root = node_to_delete.leftChild
-                    node_to_delete.father = None
+                    # node_to_delete.father = None
                 else:
                     node_to_delete.leftChild.father = node_to_delete.father
                     if node_to_delete.father.leftChild == node_to_delete:
                         node_to_delete.father.leftChild = node_to_delete.leftChild
+                        # node_to_delete.father = None
                     else:
                         node_to_delete.father.rightChild = node_to_delete.leftChild
+                        # node_to_delete.father = None
         else :
             if node_to_delete.rightChild:
                 if node_to_delete == self.root:
                     self.root = node_to_delete.rightChild
-                    node_to_delete.father = None
+                    # node_to_delete.father = None
                 else:
                     node_to_delete.rightChild.father = node_to_delete.father
                     if node_to_delete.father.leftChild == node_to_delete:
                         node_to_delete.father.leftChild = node_to_delete.rightChild
+                        # node_to_delete.father = None
                     else:
                         node_to_delete.father.rightChild = node_to_delete.rightChild
+                        # node_to_delete.father = None
             else:
-                if node_to_delete.father.leftChild == node_to_delete:
-                    node_to_delete.father.leftChild = None
+                print(node_to_delete.word)
+                if node_to_delete == self.root:
+                    self.root = NodeBST('m', isUsableWord=False)
                 else:
-                    node_to_delete.father.rightChild = None
+                    if node_to_delete.father.leftChild == node_to_delete:
+                        node_to_delete.father.leftChild = None
+                        # if node_to_delete.word == 'good':
+                        #     print(node_to_delete.father.word)
+                    else:
+                        node_to_delete.father.rightChild = None
 
     def traverse(self,node = None):
         if node == None:

@@ -1,4 +1,3 @@
-from LinkedList import LinkedList
 from BST import NodeBST
 from Stack import Stack
 
@@ -8,13 +7,13 @@ class AVL():
         self.i = 0
         self.root = None
 
-    def add(self,node_of_word):
+    def add(self, node_of_word):
         check_balance_nodes = Stack()
         current_node = self.root
         wordIsAdded = False
         if not current_node:
             current_node = NodeBST(node_of_word.data.lower())
-            current_node.refrence.SuperAdd(node_of_word)
+            current_node.refrence.SuperAdd(node_of_word, root_tree=self, node_ref=current_node.rightChild)
             self.root = current_node
             wordIsAdded = True
         while not wordIsAdded:
@@ -22,27 +21,27 @@ class AVL():
                 check_balance_nodes.push(current_node)
                 if current_node.rightChild == None:
                     current_node.rightChild = NodeBST(node_of_word.data.lower())
-                    current_node.rightChild.refrence.SuperAdd(node_of_word)
+                    current_node.rightChild.refrence.SuperAdd(node_of_word, root_tree=self,node_ref=current_node.rightChild)
                     wordIsAdded = True
-                else :
+                else:
                     current_node = current_node.rightChild
             elif node_of_word.data.lower() < current_node.word:
                 check_balance_nodes.push(current_node)
                 if current_node.leftChild == None:
                     current_node.leftChild = NodeBST(node_of_word.data.lower())
-                    current_node.leftChild.refrence.SuperAdd(node_of_word)
+                    current_node.leftChild.refrence.SuperAdd(node_of_word, root_tree=self,node_ref=current_node.leftChild)
                     wordIsAdded = True
                 else:
                     current_node = current_node.leftChild
-            else :
-                current_node.refrence.SuperAdd(node_of_word)
+            else:
+                current_node.refrence.SuperAdd(node_of_word, root_tree=self, node_ref=current_node)
                 wordIsAdded = True
         while not check_balance_nodes.isEmpty():
             current_checking_node = check_balance_nodes.pop()
-            height_of_left = self.height(current_checking_node.leftChild,isRoot=False)
-            height_of_right = self.height(current_checking_node.rightChild,isRoot=False)
-            if(height_of_left - height_of_right == 2):
-                if node_of_word.data>current_checking_node.leftChild.word:
+            height_of_left = self.ret_bf(current_checking_node.leftChild)
+            height_of_right = self.ret_bf(current_checking_node.rightChild)
+            if (height_of_left - height_of_right == 2):
+                if node_of_word.data > current_checking_node.leftChild.word:
                     # LR rotate in AVL
                     s = current_checking_node.leftChild.rightChild
                     tmpNode = current_checking_node.leftChild
@@ -57,6 +56,9 @@ class AVL():
                             check_balance_nodes.peek().leftChild = s
                         else:
                             check_balance_nodes.peek().rightChild = s
+                    self.balance_factor_cal(tmpNode)
+                    self.balance_factor_cal(s)
+                    self.balance_factor_cal(current_checking_node)
                 else:
                     # LL rotate in AVL
                     tmpNode = current_checking_node.leftChild
@@ -69,8 +71,10 @@ class AVL():
                             check_balance_nodes.peek().leftChild = tmpNode
                         else:
                             check_balance_nodes.peek().rightChild = tmpNode
-            elif(height_of_right - height_of_left == 2):
-                if node_of_word.data>current_checking_node.rightChild.word:
+                    self.balance_factor_cal(current_checking_node)
+                    self.balance_factor_cal(tmpNode)
+            elif (height_of_right - height_of_left == 2):
+                if node_of_word.data > current_checking_node.rightChild.word:
                     # RR rotate in AVL
                     tmpNode = current_checking_node.rightChild
                     current_checking_node.rightChild = tmpNode.leftChild
@@ -80,8 +84,10 @@ class AVL():
                     else:
                         if check_balance_nodes.peek().leftChild == current_checking_node:
                             check_balance_nodes.peek().leftChild = tmpNode
-                        else :
+                        else:
                             check_balance_nodes.peek().rightChild = tmpNode
+                    self.balance_factor_cal(current_checking_node)
+                    self.balance_factor_cal(tmpNode)
                 else:
                     # RL rotate in AVL
                     s = current_checking_node.rightChild.leftChild
@@ -97,19 +103,24 @@ class AVL():
                             check_balance_nodes.peek().leftChild = s
                         else:
                             check_balance_nodes.peek().rightChild = s
+                    self.balance_factor_cal(tmpNode)
+                    self.balance_factor_cal(s)
+                    self.balance_factor_cal(current_checking_node)
+            else:
+                self.balance_factor_cal(current_checking_node)
+
     def get(self, word):
         current_node = self.root
-        while current_node!=None:
+        while current_node != None:
             if word.lower() == current_node.word:
                 return current_node
             if word.lower() > current_node.word:
                 current_node = current_node.rightChild
-            else :
+            else:
                 current_node = current_node.leftChild
         return None
 
-
-    def traverse(self,node = None):
+    def traverse(self, node=None):
         if node == None:
             node = self.root
         if node.leftChild != None:
@@ -117,7 +128,7 @@ class AVL():
         if node.rightChild != None:
             self.traverse(node=node.rightChild)
         self.i = self.i + 1
-        print(self.i.__str__() + ' ' + node.word)
+        print(self.i.__str__() + ' ' + node.word + node.balance_factor.__str__())
 
     def traverse_words_documents(self, node=None,sentence=''):
         if node == None:
@@ -140,3 +151,19 @@ class AVL():
         leftH = self.height(node = node.leftChild,isRoot=False)
         rightH = self.height(node = node.rightChild,isRoot=False)
         return max(leftH,rightH)+1
+
+    def balance_factor_cal(self,node):
+        result = 0
+        left_bf = -1
+        right_bf = -1
+        if node.leftChild:
+            left_bf = node.leftChild.balance_factor
+        if node.rightChild:
+            right_bf = node.rightChild.balance_factor
+        node.balance_factor = max(left_bf,right_bf)+1
+
+    def ret_bf(self,node):
+        if not node :
+            return -1
+        else:
+            return node.balance_factor
