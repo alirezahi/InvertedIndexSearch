@@ -120,6 +120,74 @@ class AVL():
                 current_node = current_node.leftChild
         return None
 
+    def find_biggest_left_child(self,node):
+        while node.rightChild:
+            node = node.rightChild
+        return node
+
+    def find_lowest_right_child(self, node):
+        while node.leftChild:
+            node = node.leftChild
+        return node
+
+    def remove(self,node_to_delete):
+        if node_to_delete.leftChild:
+            if node_to_delete.rightChild:
+                tmp_node = self.find_lowest_right_child(node_to_delete.rightChild)
+                self.remove(tmp_node)
+                if node_to_delete.rightChild:
+                    node_to_delete.rightChild.father = tmp_node
+                node_to_delete.leftChild.father = tmp_node
+                tmp_node.father = node_to_delete.father
+                tmp_node.leftChild = node_to_delete.leftChild
+                tmp_node.rightChild = node_to_delete.rightChild
+                if node_to_delete == self.root :
+                    self.root = tmp_node
+                    # node_to_delete.father = None
+                else:
+                    if node_to_delete.father.leftChild == node_to_delete:
+                        node_to_delete.father.leftChild = tmp_node
+                        # node_to_delete.father = None
+                    else:
+                        node_to_delete.father.rightChild = tmp_node
+                        # node_to_delete.father = None
+            else:
+                if node_to_delete == self.root:
+                    self.root = node_to_delete.leftChild
+                    # node_to_delete.father = None
+                else:
+                    node_to_delete.leftChild.father = node_to_delete.father
+                    if node_to_delete.father.leftChild == node_to_delete:
+                        node_to_delete.father.leftChild = node_to_delete.leftChild
+                        # node_to_delete.father = None
+                    else:
+                        node_to_delete.father.rightChild = node_to_delete.leftChild
+                        # node_to_delete.father = None
+        else :
+            if node_to_delete.rightChild:
+                if node_to_delete == self.root:
+                    self.root = node_to_delete.rightChild
+                    # node_to_delete.father = None
+                else:
+                    node_to_delete.rightChild.father = node_to_delete.father
+                    if node_to_delete.father.leftChild == node_to_delete:
+                        node_to_delete.father.leftChild = node_to_delete.rightChild
+                        # node_to_delete.father = None
+                    else:
+                        node_to_delete.father.rightChild = node_to_delete.rightChild
+                        # node_to_delete.father = None
+            else:
+                print(node_to_delete.word)
+                if node_to_delete == self.root:
+                    self.root = NodeBST('m', isUsableWord=False)
+                else:
+                    if node_to_delete.father.leftChild == node_to_delete:
+                        node_to_delete.father.leftChild = None
+                        # if node_to_delete.word == 'good':
+                        #     print(node_to_delete.father.word)
+                    else:
+                        node_to_delete.father.rightChild = None
+
     def traverse(self, node=None):
         if node == None:
             node = self.root

@@ -34,7 +34,8 @@ class LinkedList():
             self.head.prev = node
             node.next = self.head
         return node
-    def SuperAdd(self,node,root_tree,node_ref):
+
+    def SuperAdd(self,node,root_tree=None,node_ref=None):
         if self.head.superNext == None:
             node.main_head = self.head
             self.head.superNext = node
@@ -55,7 +56,7 @@ class LinkedList():
 
     def search(self, k):
         p = self.head
-        while p.next != None:
+        while p.next != None and p.next.data != None:
             p = p.next
             if p.data == k:
                 return p

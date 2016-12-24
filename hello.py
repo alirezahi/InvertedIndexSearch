@@ -2,9 +2,9 @@ from graphviz import Digraph
 
 dot = Digraph(comment='The Round Table')
 
-dot.node('A', 'Navid')
-dot.node('B', 'Khar')
-dot.node('L', 'Ast')
+dot.node('A', 'emtehanat')
+dot.node('B', 'nazdik')
+dot.node('L', 'ast')
 
 dot.edges(['AB', 'AL'])
 dot.edge('B', 'L', constraint='false')
