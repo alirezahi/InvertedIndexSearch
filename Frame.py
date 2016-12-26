@@ -7,6 +7,7 @@ import tkinter.messagebox
 from TST import TST
 from BST import BST
 from Trie import Trie
+from HashMap import HashMap
 
 
 main_command_line = Entry
@@ -104,6 +105,7 @@ directory_var = ""
 stopwordsTST = None
 stopwordsBST = None
 stopwordsTrie = None
+stopwordsHashMap = None
 
 def Stopwords_def():
     from LinkedList import Node
@@ -139,6 +141,18 @@ def Stopwords_def():
             node = Node(data=stopword)
             stopwordsTrie.add(node)
     # <-- End Listing Stopwords Trie -->
+
+
+    # <-- Start Listing Stopwords in HashMap from the list of "Stopwords" -->
+    global stopwordsHashMap
+    stopwordsHashMap = HashMap()
+    with open('StopWords.txt', 'r+') as myfile:
+        DATA = myfile.read().replace('\n', ' ')
+        for stopword in re.findall(r"[\w']+", DATA):
+            node = Node(data=stopword)
+            stopwordsHashMap.add(node)
+    # <-- End Listing Stopwords HashMap -->
+
 import time
 words_tree = None
 from LinkedList import LinkedList
@@ -200,6 +214,23 @@ def Build(directory_entered,tree_type):
                                 if stopwordsTrie.get(word) == None:
                                     words_tree.add(node)
             # Trie Search
+
+        elif tree_type.get() == 4:
+            # HashMap Search
+            words_tree = HashMap()
+            for subdir, dirs, files in os.walk(directory_entered.get()):
+                for file in files:
+                    if file.endswith('.txt'):
+                        with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
+                            fileLinkedList = LinkedList(documentName=file[:-4])
+                            files_list.append(fileLinkedList)
+                            DATA = myfile.read().replace('\n', ' ')
+                            for word in re.findall(r"[\w']+", DATA):
+                                node = fileLinkedList.add(word)
+                                if stopwordsHashMap.get(word) == None:
+                                    words_tree.add(node)
+            # HashMap Search
+
         write_result('Build is Complete\n')
         end_time = time.time()
         write_result('Time of Process : ' + str(end_time-start_time)+' Seconds\n---------------\n')
@@ -293,6 +324,18 @@ def sytax_of_command_line(command):
                                             node = fileLinkedList.add(word)
                                             if stopwordsTrie.get(word) == None:
                                                 words_tree.add(node)
+                    if tree_type_global.get() == 4:
+                        for subdir, dirs, files in os.walk(directory_text_field_global.get()):
+                            for file in files:
+                                if name_of_file in file and file.endswith('.txt'):
+                                    with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
+                                        fileLinkedList = LinkedList(documentName=file[:-4])
+                                        files_list.append(fileLinkedList)
+                                        DATA = myfile.read().replace('\n', ' ')
+                                        for word in re.findall(r"[\w']+", DATA):
+                                            node = fileLinkedList.add(word)
+                                            if stopwordsHashMap.get(word) == None:
+                                                words_tree.add(node)
                     write_result('File ' + name_of_file + ' Added\n---------------\n')
             else:
                 write_result('Error : Unkown File address\n---------------\n')
@@ -384,7 +427,19 @@ def sytax_of_command_line(command):
                                             node = fileLinkedList.add(word)
                                             if stopwordsTrie.get(word) == None:
                                                 words_tree.add(node)
-                    write_result('File' + name_of_file + 'Updated\n---------------\n')
+                    if tree_type_global.get() == 4:
+                        for subdir, dirs, files in os.walk(directory_text_field_global.get()):
+                            for file in files:
+                                if name_of_file in file and file.endswith('.txt'):
+                                    with open(os.path.join(subdir, file), 'r+', errors='ignore') as myfile:
+                                        fileLinkedList = LinkedList(documentName=file[:-4])
+                                        files_list.append(fileLinkedList)
+                                        DATA = myfile.read().replace('\n', ' ')
+                                        for word in re.findall(r"[\w']+", DATA):
+                                            node = fileLinkedList.add(word)
+                                            if stopwordsHashMap.get(word) == None:
+                                                words_tree.add(node)
+                    write_result('File ' + name_of_file + ' Updated\n---------------\n')
                 if not file_name_found:
                     write_result('Error : Document not Found!!!\n---------------\n')
             else:
@@ -419,7 +474,6 @@ def sytax_of_command_line(command):
             write_result(words_tree.traverse_words_documents())
             write_result('Number of all Words : '+str(words_tree.number_of_words) + '\n---------------\n')
             words_tree.number_of_words = 0
-            print(words_tree.traverse())
             return True
         elif current_state == 10:
             for file in files_list:
@@ -479,20 +533,6 @@ def sytax_of_command_line(command):
     return True
 
 if __name__ == '__main__':
-    from AVL import AVL
-    al = AVL()
-    al.add(Node('a'))
-    al.add(Node('b'))
-    al.add(Node('c'))
-    al.add(Node('g'))
-    al.add(Node('f'))
-    al.add(Node('e'))
-    al.add(Node('i'))
-    al.add(Node('d'))
-    al.add(Node('h'))
-    al.add(Node('j'))
-    al.add(Node('k'))
-    al.traverse()
 
     search_var = IntVar
 
@@ -541,6 +581,9 @@ if __name__ == '__main__':
 
     R3 = Radiobutton(search_ds, text="Trie", variable=var, value=3)
     R3.pack( side = LEFT )
+
+    R4 = Radiobutton(search_ds, text="Hash", variable=var, value=4)
+    R4.pack(side=LEFT)
 
     command_line_frame = LabelFrame(root,text='Command Line : ')
     command_line_frame.pack()

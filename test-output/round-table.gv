@@ -1,8 +1,8 @@
 // The Round Table
 digraph {
-	A [label=Navid]
-	B [label=Khar]
-	L [label=Ast]
+	A [label=emtehanat]
+	B [label=nazdik]
+	L [label=ast]
 		A -> B
 		A -> L
 		B -> L [constraint=false]

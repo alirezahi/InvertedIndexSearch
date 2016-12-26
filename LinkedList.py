@@ -28,6 +28,7 @@ class LinkedList():
             self.head.next = node
             self.head.prev = node
             node.prev = self.head
+            node.next = self.head
         else:
             node.prev = self.head.prev
             self.head.prev.next = node
@@ -58,7 +59,7 @@ class LinkedList():
         p = self.head
         while p.next != None and p.next.data != None:
             p = p.next
-            if p.data == k:
+            if p.data.lower() == k.lower():
                 return p
         return None
 
@@ -74,7 +75,6 @@ class LinkedList():
             inputNode.superNext.superPrev = inputNode.superPrev
             inputNode.superNext == None
             inputNode.superPrev == None
-            from BST import BST
             if (inputNode.main_head.superNext == None or inputNode.main_head.superNext == inputNode.main_head):
                 inputNode.root_tree.remove(inputNode.node_ref)
 
