@@ -6,6 +6,7 @@ class NodeBST():
         self.word = word
         self.leftChild = None
         self.rightChild = None
+        self.father = None
         self.isUsableWord = isUsableWord
         self.refrence = LinkedList(node_ref=self)
         self.balance_factor = 0
