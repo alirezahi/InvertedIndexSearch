@@ -6,6 +6,7 @@ import tkinter.messagebox
 
 from TST import TST
 from BST import BST
+from AVL import AVL
 from Trie import Trie
 from HashMap import HashMap
 
@@ -124,7 +125,7 @@ def Stopwords_def():
 
     # <-- Start Listing Stopwords in BST from the list of "Stopwords" -->
     global stopwordsBST
-    stopwordsBST = BST()
+    stopwordsBST = AVL()
     with open('StopWords.txt', 'r+') as myfile:
         DATA = myfile.read().replace('\n', ' ')
         for stopword in re.findall(r"[\w']+", DATA):
@@ -185,7 +186,8 @@ def Build(directory_entered,tree_type):
             # TST Tree
         elif tree_type.get() == 2:
             # BST Search
-            words_tree = BST()
+            from AVL import AVL
+            words_tree = AVL()
             for subdir, dirs, files in os.walk(directory_entered.get()):
                 for file in files:
                     if file.endswith('.txt'):
